@@ -1,5 +1,5 @@
 import { User } from "./models/User";
-import { createGame } from "./controllers/GameController";
+import  GameController  from "./controllers/GameController";
 import DBController from "./controllers/DBController";
 const app = require('express')();
 const http = require('http').Server(app);
@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 
 io.on("connection", socket => {
   socket.on("create:game", ( user: User ) => {
-    const newGame  = createGame(user);
+    const newGame  = GameController.createGame(user);
     socket.emit("game:created", newGame);
   });
   console.log(socket.id)
