@@ -1,10 +1,32 @@
-import express from 'express';
+const app = require('express')();
+const http = require('http').Server(app);
+const io = require('socket.io')(http,{
+  cors: {
+    origin: '*',
+  }
+});
+const port = process.env.PORT || 4000;
 
-const app = express();
-const PORT = process.env.PORT || 4000;
 app.get('/', (req, res) => {
   res.send('Welcome to pointing poker API');
 });
-app.listen(PORT, () => {
-  console.log(`server is listening on ${PORT}`);
+
+io.on("connection", socket => {
+  console.log(socket.id)
 });
+
+http.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}/`);
+});
+
+
+
+
+
+
+
+
+
+
+
+
