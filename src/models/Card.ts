@@ -3,6 +3,5 @@ export interface Card {
     type: string;
     shortType: string;
     selected: boolean;
-    closed: boolean;
     editable: boolean;
   }

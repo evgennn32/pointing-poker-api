@@ -3,6 +3,7 @@ import { User } from "./user";
 import { Card } from "./card";
 
 export interface GameRoomEntity {
+  roomName: string;
   roomID: string;
   scramMuster: User,
   gameSettings: {
@@ -11,7 +12,7 @@ export interface GameRoomEntity {
     isTimerNeeded: boolean;
     scoreType: string;
     scoreTypeShort: string;
-    roundTime: string;
+    roundTime: number;
     timeOut: boolean;
     gameInProgress: boolean;
   };
