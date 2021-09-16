@@ -48,9 +48,11 @@ io.on("connection", socket => {
   });
   socket.on('game:delete', (roomId: string, cb: ({}) => void) => {
     try {
-      (DBController.deleteGame(roomId));
+      GameController.deleteGame(roomId);
     } catch (error) {
-      cb({error: error.message});
+      if(typeof cb === 'function'){
+        cb({error: error.message})
+      }
     } 
     socket.in(roomId).emit(
       'notification',
