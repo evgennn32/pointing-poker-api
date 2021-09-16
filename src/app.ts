@@ -30,6 +30,14 @@ io.on("connection", socket => {
       cb({error:'No such game or id is incorrect'});
     }
   });
+  socket.on('game:delete', (roomId: string, cb: ({}) => void) => {
+    try {
+      (DBController.deleteGame(roomId));
+      socket.join(roomId);
+    } catch (error) {
+      cb({error: error });
+    } 
+  });
   console.log(socket.id)
 });
 

@@ -30,4 +30,7 @@ export default {
 
     return newGame;
   },
+  deleteGame: (roomId: string) => {
+    DBController.deleteGame(roomId);
+  }
 }
