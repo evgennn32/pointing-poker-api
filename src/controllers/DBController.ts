@@ -1,4 +1,5 @@
 import { GameRoomEntity } from "../models/GameRoomEntity";
+import { User } from "../models/User";
 
 export default {
   initDB: () => {
@@ -11,6 +12,16 @@ export default {
   },
 
   gameIsset: (gameId:string) => {
-    return gameId in global.DB.games
+    return gameId in global.DB.games;
+  },
+
+  addUser: (user: User, roomID): {error?: string; user?: User} => {
+    if(!global.DB.games[roomID]) {
+      return {error: 'No such game'};
+    }
+    global.DB.games[roomID].users.push(user);
+    return {user};
   }
+
+
 }
