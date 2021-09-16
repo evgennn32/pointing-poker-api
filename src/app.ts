@@ -23,15 +23,9 @@ io.on("connection", socket => {
     socket.emit("game:created", newGame);
     console.log(socket.rooms);
   });
-  socket.on('game:join', (user: User, roomId: string, cb: ({}) => void) => {
-    console.log('try to join');
-    console.log('game isset', DBController.gameIsset(roomId))
-    console.log(global.DB.games)
+  socket.on('game:join', (roomId: string, cb: ({}) => void) => {
     if (DBController.gameIsset(roomId)) {
       socket.join(roomId);
-      // TODO create User
-      const newUser = {test: "test"}
-      socket.emit("game:join", newUser);
     } else {
       cb({error:'No such game or id is incorrect'});
     }
