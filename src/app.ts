@@ -59,6 +59,11 @@ io.on("connection", socket => {
       {message: `Game with '${global.DB.games[roomId]}' id has been deleted`}
     )
   });
+
+  socket.on('DB:getAllData', ( cb: ({}) => void) => {
+    typeof cb === "function" ? cb(global.DB) : null;
+  });
+
   console.log(socket.id)
 });
 
