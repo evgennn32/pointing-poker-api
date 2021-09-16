@@ -2,6 +2,7 @@ import { User } from "../models/User";
 import { InitialCards } from "../models/InitialCards";
 import { createId } from "../shared/helpers";
 import DBController from "./DBController";
+import GameSettings from "../models/GameSettings";
 
 export default {
   createGame: (user: User) => {
@@ -32,6 +33,18 @@ export default {
   },
   deleteGame: (roomId: string) => {
     DBController.deleteGame(roomId);
+  },
+  updateGameSettings: (settings: GameSettings, roomId): {error?: string; settings?: GameSettings} => {
+    if (!settings) {
+      return {error: "Settings required"}
+    }
+    if (!roomId) {
+      return {error: "RoomId is required"}
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't update settings"}
+    }
+    return DBController.updateGameSettings(settings, roomId);
   },
   addUser: (newUser: User, roomId): { user?: User, error?: string } => {
     if (!newUser.firstName) {
