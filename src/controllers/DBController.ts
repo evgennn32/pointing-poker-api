@@ -8,5 +8,9 @@ export default {
   addGame: (game: GameRoomEntity) => {
     global.DB.games[game.roomID] = game;
     return game.roomID
+  },
+
+  gameIsset: (gameId:string) => {
+    return gameId in global.DB.games
   }
 }
