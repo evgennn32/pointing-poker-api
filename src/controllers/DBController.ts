@@ -28,7 +28,11 @@ export default {
     }
     global.DB.games[roomID].users.push(user);
     return {user};
+  },
+  deleteUser: (userId: string, roomID: string): {error?: string; user?: User[]} => {
+    return
   }
+
 
 
 }
