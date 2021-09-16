@@ -46,6 +46,16 @@ io.on("connection", socket => {
       {message: `${user.firstName} ${user.lastName} just joined the game`}
     )
   });
+
+  socket.on('user:delete', (userId: string, roomId: string, cb: ({}) => void) => {
+    const {users, error} = GameController.deleteUser(userId, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb(error) : null;
+    }
+    typeof cb === "function" ? cb(users) : '';
+    // TODO send all users to all room clients
+  });
+
   socket.on('game:delete', (roomId: string, cb: ({}) => void) => {
     try {
       GameController.deleteGame(roomId);
@@ -53,7 +63,6 @@ io.on("connection", socket => {
      return typeof cb === "function" ? cb({error: error.message}) : '';
     } 
       io.emit({message: `Game with '${global.DB.games[roomId]}' id has been deleted`});
-
   });
 
   socket.on('DB:getAllData', ( cb: ({}) => void) => {

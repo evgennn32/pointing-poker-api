@@ -44,7 +44,7 @@ export default {
 
     return DBController.addUser(newUser, roomId);
   },
-  deleteUser: (userId: string, roomId: string) => {
+  deleteUser: (userId: string, roomId: string): { users?: User[], error?: string } => {
     if (!roomId) {
       return {error: "RoomId is required"}
     }
@@ -52,10 +52,10 @@ export default {
       return {error: "userId is required"}
     }
     if (!DBController.gameIsset(roomId)) {
-      return {error: "userId is required"}
+      return {error: "This game no longer exists can't delete user"}
     }
 
-    return DBController.deleteUser(userId, roomId);
+    return {users: DBController.deleteUser(userId, roomId)};
 
   }
 }
