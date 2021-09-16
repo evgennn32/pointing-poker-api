@@ -49,10 +49,13 @@ io.on("connection", socket => {
   socket.on('game:delete', (roomId: string, cb: ({}) => void) => {
     try {
       (DBController.deleteGame(roomId));
-      socket.join(roomId);
     } catch (error) {
-      cb({error: error });
+      cb({error: error.message});
     } 
+    socket.in(roomId).emit(
+      'notification',
+      {message: `Game with '${global.DB.games[roomId]}' id has been deleted`}
+    )
   });
   console.log(socket.id)
 });
