@@ -4,7 +4,7 @@ import { createId } from "../shared/helpers";
 import DBController from "./DBController";
 
 export default {
-  createGame: (user: User ) => {
+  createGame: (user: User) => {
     user.id = createId();
     const gameId = createId();
     const newGame = {
@@ -32,5 +32,17 @@ export default {
   },
   deleteGame: (roomId: string) => {
     DBController.deleteGame(roomId);
+  },
+  addUser: (newUser: User, roomId): { user?: User, error?: string } => {
+    if (!newUser.firstName) {
+      return {error: "Username and room are required"}
+    }
+    if (!roomId) {
+      return {error: "Room are required"}
+    }
+    newUser.id = createId();
+
+    return DBController.addUser(newUser, roomId)
+
   }
 }
