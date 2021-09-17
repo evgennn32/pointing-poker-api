@@ -45,6 +45,15 @@ export default {
     global.DB.games[roomID].issues.push(issue);
     return {issue};
   },
+  updateIssue: (updatedIssue: Issue, roomID): {error?: string; issues?: Issue[]} => {
+    if(!global.DB.games[roomID]) {
+      return {error: 'No such game'};
+    }
+    global.DB.games[roomID].issues = global.DB.games[roomID].issues.map(
+      (issue) => (issue.id === updatedIssue.id ? updatedIssue : issue)
+    );
+    return {issues: global.DB.games[roomID].issues};
+  },
   deleteIssue: (issueId: string, roomId): Issue[] => {
     global.DB.games[roomId].issues = global.DB.games[roomId].issues.filter((issue) => issue.id !== issueId);
     return global.DB.games[roomId].issues;

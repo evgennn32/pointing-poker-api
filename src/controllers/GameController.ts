@@ -73,7 +73,6 @@ export default {
 
   },
   addIssue: (issue: Issue, roomId): { issue?: Issue, error?: string } => {
-    console.log(issue)
     if (!issue.issueName) {
       return {error: "issue name is required"}
     }
@@ -84,6 +83,20 @@ export default {
 
     return DBController.addIssue(issue, roomId);
   },
+  updateIssue: (issue: Issue, roomId): { issues?: Issue[], error?: string } => {
+    if (!issue.issueName) {
+      return {error: "issue name is required"}
+    }
+    if (!issue.id) {
+      return {error: "issue id is required"}
+    }
+    if (!roomId) {
+      return {error: "RoomId is required"}
+    }
+
+    return DBController.updateIssue(issue, roomId);
+  },
+
   deleteIssue:(issueId: string, roomId: string): { issues?: Issue[], error?: string } => {
     if (!roomId) {
       return {error: "RoomId is required"};
