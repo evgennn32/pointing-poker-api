@@ -1,7 +1,8 @@
 # pointing-poker-api
+
 Api for Rolling Scopes School task "Pointing-poker".
 
-## Setup and Running
+Setup and Running
 
 - Use `node 14.x` or higher.
 - Clone this repo: `$ git clone https://github.com/mikhama/async-race-api.git`.
@@ -10,664 +11,686 @@ Api for Rolling Scopes School task "Pointing-poker".
 - Start server: `$ npm start`.
 - Now you can send requests to the address: `http://127.0.0.1:4000`.
 
-## Usage
+Usage
 
 - **Game**
-    - [Create Game](https://github.com/evgennn32/pointing-poker-api#create-game)
-    - [Update Game Settings](https://github.com/evgennn32/pointing-poker-api#update-game-settings)
-    - [Join Game](https://github.com/evgennn32/pointing-poker-api#join-game)
-    - [Delete Game](https://github.com/evgennn32/pointing-poker-api#delete-game)
+  - [Create Game](https://github.com/evgennn32/pointing-poker-api#create-game)
+  - [Update Game Settings](https://github.com/evgennn32/pointing-poker-api#update-game-settings)
+  - [Join Game](https://github.com/evgennn32/pointing-poker-api#join-game)
+  - [Delete Game](https://github.com/evgennn32/pointing-poker-api#delete-game)
 - **Users**
-    - [Create User](https://github.com/evgennn32/pointing-poker-api#create-user)
-    - [Delete User](https://github.com/evgennn32/pointing-poker-api#delete-user)
+  - [Create User](https://github.com/evgennn32/pointing-poker-api#create-user)
+  - [Delete User](https://github.com/evgennn32/pointing-poker-api#delete-user)
 - **Issues**
-    - [Create Issue](https://github.com/evgennn32/pointing-poker-api#create-issue)
-    - [Delete Issue](https://github.com/evgennn32/pointing-poker-api#delete-issue)
-    - [Update Issue](https://github.com/evgennn32/pointing-poker-api#update-issue)c
+  - [Create Issue](https://github.com/evgennn32/pointing-poker-api#create-issue)
+  - [Delete Issue](https://github.com/evgennn32/pointing-poker-api#delete-issue)
+  - [Update Issue](https://github.com/evgennn32/pointing-poker-api#update-issue)c
 - **Cards**
-    - [Create Card](https://github.com/evgennn32/pointing-poker-api#create-Card)
-    - [Delete Card](https://github.com/evgennn32/pointing-poker-api#delete-Card)
-    - [Update Card](https://github.com/evgennn32/pointing-poker-api#update-Card)
+  - [Create Card](https://github.com/evgennn32/pointing-poker-api#create-Card)
+  - [Delete Card](https://github.com/evgennn32/pointing-poker-api#delete-Card)
+  - [Update Card](https://github.com/evgennn32/pointing-poker-api#update-Card)
 
 **Create Game**
-----
+
 Creates a new game.
 
 <details>
 
-* **Event**
+- **Event**
 
-    create:game
+  create:game
 
-*  **Params**
-    ```typescript
-      {
-          "user": {
-                    id: string;
-                    image: string | null;
-                    firstName: string;
-                    lastName: string;
-                    position: string;
-                    ableToDelete: boolean;
-                    score: string;
-                    scramMaster: boolean;
+- **Params**
+
+  ```typescript
+    {
+        "user": {
+                  id: string;
+                  image: string | null;
+                  firstName: string;
+                  lastName: string;
+                  position: string;
+                  ableToDelete: boolean;
+                  score: string;
+                  scramMaster: boolean;
+                }
+    }
+  ```
+
+- **Success event name**
+
+  game:created
+
+- **Success event data**
+
+  ```typescript
+    {
+        "newGame": {
+                    roomName: string;
+                    roomID: string;
+                    scramMuster: User,
+                    gameSettings: GameSettings;
+                    users: User[];
+                    issues: Issue[];
+                    cards: Card[];
                   }
-      }
-    ```
+    }
+  ```
 
-* **Success event name**
+- **Success callback response**
 
-    game:created
-    
-* **Success event data**
-    ```typescript
-      {
-          "newGame": {
-                      roomName: string;
-                      roomID: string;
-                      scramMuster: User,
-                      gameSettings: GameSettings;
-                      users: User[];
-                      issues: Issue[];
-                      cards: Card[];
-                    }
-      }
-    ```
+  None
 
-* **Success callback response**
+- **Error callback response:**
 
-    None
- 
-* **Error callback response:**
+  None
 
-    None
+- **Notes:**
 
-* **Notes:**
-
-    None
+  None
 
 </details>
 
 **Update Game Settings**
-----
+
 Update the game settings options.
 
 <details>
 
-* **Event**
+- **Event**
 
-    game:update-settings
+  game:update-settings
 
-*  **Params**
-    ```typescript
-      {
-          "gameSettings": {
-                    scrumMasterAsPlayer: boolean;
-                    changingCardInRoundEnd: boolean;
-                    isTimerNeeded: boolean;
-                    scoreType: string;
-                    scoreTypeShort: string;
-                    roundTime: number;
-                    timeOut: boolean;
-                    gameInProgress: boolean;
-                  },
-           "roomId": string
-      }
-    ```
+- **Params**
 
-* **Success event name**
+  ```typescript
+    {
+        "gameSettings": {
+                  scrumMasterAsPlayer: boolean;
+                  changingCardInRoundEnd: boolean;
+                  isTimerNeeded: boolean;
+                  scoreType: string;
+                  scoreTypeShort: string;
+                  roundTime: number;
+                  timeOut: boolean;
+                  gameInProgress: boolean;
+                },
+         "roomId": string
+    }
+  ```
 
-    None
+- **Success event name**
 
-    
-* **Success event data**
+  None
 
-    None
+- **Success event data**
 
-* **Success callback response**
-     ```typescript
-        {
-          settings: {
-                    scrumMasterAsPlayer: boolean;
-                    changingCardInRoundEnd: boolean;
-                    isTimerNeeded: boolean;
-                    scoreType: string;
-                    scoreTypeShort: string;
-                    roundTime: number;
-                    timeOut: boolean;
-                    gameInProgress: boolean;
-                  }
-        }
-     ```
+  None
 
-* **Error callback response:**
-     ```typescript
-        {
-          error: string
-        }
-     ```
+- **Success callback response**
 
-* **Notes:**
+  ```typescript
+  {
+    settings: {
+      scrumMasterAsPlayer: boolean;
+      changingCardInRoundEnd: boolean;
+      isTimerNeeded: boolean;
+      scoreType: string;
+      scoreTypeShort: string;
+      roundTime: number;
+      timeOut: boolean;
+      gameInProgress: boolean;
+    }
+  }
+  ```
 
-    None
+- **Error callback response:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
 
 </details>
 
 **Join Game**
-----
+
 Join existing game.
 
 <details>
 
-* **Event**
+- **Event**
 
-    game:join
+  game:join
 
-*  **Params**
+- **Params**
 
-    ```typescript
-      {
-          "roomId":string
-      }
-    ```
+  ```typescript
+    {
+        "roomId":string
+    }
+  ```
 
-* **Success event name**
+- **Success event name**
 
-    None
-    
-* **Success event data**
   None
 
-* **Success callback response**
+- **Success event data**
+  None
 
-    None
- 
-* **Error callback response:**
+- **Success callback response**
 
-    ```typescript
-      {
-          error: 'No such game or id is incorrect'
-      }
-    ```
+  None
 
-* **Notes:**
+- **Error callback response:**
 
-    None
+  ```typescript
+  {
+    error: "No such game or id is incorrect";
+  }
+  ```
+
+- **Notes:**
+
+  None
 
 </details>
 
 **Delete Game**
-----
+
 Delete existing game.
 
 <details>
 
-* **Event**
+- **Event**
 
-    game:delete
+  game:delete
 
-*  **Params**
-    ```typescript
-      {
-        "roomId": string
-      }
-    ```
+- **Params**
 
-* **Success event name**
+  ```typescript
+    {
+      "roomId": string
+    }
+  ```
 
-    None
+- **Success event name**
 
-    
-* **Success event data**
+  None
 
-     ```typescript
-          message: `Game with '${global.DB.games[roomId]}' id has been deleted`
-        } 
+- **Success event data**
 
-* **Success callback response**
+  ```typescript
+       message: `Game with '${global.DB.games[roomId]}' id has been deleted`
+     }
 
-    None
+  ```
 
-* **Error callback:**
-     ```typescript
-          {
-            error: string
-          }
-     ```
+- **Success callback response**
 
-* **Notes:**
+  None
 
-    None
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
 
 </details>
 
-
 **Create User**
-----
+
 Create new user in existing game/room.
 
 <details>
 
-* **Event**
+- **Event**
 
-    user:create
+  user:create
 
-*  **Params**
-    ```typescript
-      {
-          "newUser": {
-                    id: string;
-                    image: string | null;
-                    firstName: string;
-                    lastName: string;
-                    position: string;
-                    ableToDelete: boolean;
-                    score: string;
-                    scramMaster: boolean;
-                  },
-           "roomId": string
-      }
-    ```
+- **Params**
 
-* **Success event name**
+  ```typescript
+    {
+        "newUser": {
+                  id: string;
+                  image: string | null;
+                  firstName: string;
+                  lastName: string;
+                  position: string;
+                  ableToDelete: boolean;
+                  score: string;
+                  scramMaster: boolean;
+                },
+         "roomId": string
+    }
+  ```
 
-    notification
+- **Success event name**
 
-    
-* **Success event data**
-    ```typescript
-      {
-          message: `${userName} just joined the game`
-      }
-    ```
-* **Success callback response**
-     ```typescript
-                {          
-                  user: {
-                    id: string;
-                    image: string | null;
-                    firstName: string;
-                    lastName: string;
-                    position: string;
-                    ableToDelete: boolean;
-                    score: string;
-                    scramMaster: boolean;
-                  }
-                }
-     ```
+  notification
 
-* **Error callback:**
-     ```typescript
-          {
-            error: 'This game no longer exists'
-          }
-     ```
+- **Success event data**
+  ```typescript
+  {
+    message: `${userName} just joined the game`;
+  }
+  ```
+- **Success callback response**
 
-* **Notes:**
+  ```typescript
+  {
+    user: {
+      id: string;
+      image: string | null;
+      firstName: string;
+      lastName: string;
+      position: string;
+      ableToDelete: boolean;
+      score: string;
+      scramMaster: boolean;
+    }
+  }
+  ```
 
-    None
+- **Error callback:**
+
+  ```typescript
+  {
+    error: "This game no longer exists";
+  }
+  ```
+
+- **Notes:**
+
+  None
 
 </details>
 
 **Delete User**
-----
+
 Delete user from existing game.
 
 <details>
 
-* **Event**
+- **Event**
 
-    user:delete
+  user:delete
 
-*  **Params**
-    ```typescript
-      {
-           userId: string,
-           roomId: string
-      }
-    ```
+- **Params**
 
-* **Success event name**
+  ```typescript
+    {
+         userId: string,
+         roomId: string
+    }
+  ```
 
-    None
+- **Success event name**
 
-    
-* **Success event data**
+  None
 
-    None
+- **Success event data**
 
-* **Success callback response**
-     ```typescript
-                {          
-                  users: User[]
-                }
-     ```
+  None
 
-* **Error callback:**
-     ```typescript
-          {
-            error: string
-          }
-     ```
+- **Success callback response**
 
-* **Notes:**
+  ```typescript
+             {
+               users: User[]
+             }
+  ```
 
-    None
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
 
 </details>
 
 **Create Issue**
-----
+
 Create new issue in existing game/room.
 
 <details>
 
-* **Event**
+- **Event**
 
-    game:issue-add
+  game:issue-add
 
-*  **Params**
-    ```typescript
-      {
-          "newIssue": {
-                    id: string;
-                    issueName: string;
-                    priority: string;
-                    selected: boolean;
-                    link: string;
-                    editable: boolean;
-                  },
-           "roomId": string
-      }
-    ```
+- **Params**
 
-* **Success event name**
+  ```typescript
+    {
+        "newIssue": {
+                  id: string;
+                  issueName: string;
+                  priority: string;
+                  selected: boolean;
+                  link: string;
+                  editable: boolean;
+                },
+         "roomId": string
+    }
+  ```
 
-    None
+- **Success event name**
 
-    
-* **Success event data**
+  None
 
-    None
+- **Success event data**
 
-* **Success callback response**
-     ```typescript
-                {          
-                  issue: {
-                    id: string;
-                    issueName: string;
-                    priority: string;
-                    selected: boolean;
-                    link: string;
-                    editable: boolean;
-                  }
-                }
-     ```
+  None
 
-* **Error callback:**
-     ```typescript
-          {
-            error: string
-          }
-     ```
+- **Success callback response**
 
-* **Notes:**
+  ```typescript
+  {
+    issue: {
+      id: string;
+      issueName: string;
+      priority: string;
+      selected: boolean;
+      link: string;
+      editable: boolean;
+    }
+  }
+  ```
 
-    None
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
 
 </details>
 
 **Delete Issue**
-----
+
 Delete issue from existing game.
 
 <details>
 
-* **Event**
+- **Event**
 
-    game:issue-delete
+  game:issue-delete
 
-*  **Params**
-    ```typescript
-      {
-           issueId: string,
-           roomId: string
-      }
-    ```
+- **Params**
 
-* **Success event name**
+  ```typescript
+    {
+         issueId: string,
+         roomId: string
+    }
+  ```
 
-    None
+- **Success event name**
 
-    
-* **Success event data**
+  None
 
-    None
+- **Success event data**
 
-* **Success callback response**
-     ```typescript
-                {          
-                  issues: Issue[]
-                }
-     ```
+  None
 
-* **Error callback:**
-     ```typescript
-          {
-            error: string
-          }
-     ```
+- **Success callback response**
 
-* **Notes:**
+  ```typescript
+             {
+               issues: Issue[]
+             }
+  ```
 
-    None
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
 
 </details>
 
 **Update Issue**
-----
+
 Update issue parameters.
 
 <details>
 
-* **Event**
+- **Event**
 
-    game:issue-update
+  game:issue-update
 
-*  **Params**
-    ```typescript
-      {
-           issueToUpdate: {
-                id: string;
-                issueName: string;
-                priority: string;
-                selected: boolean;
-                link: string;
-                editable: boolean;
-                  },
-           roomId: string
-      }
-    ```
+- **Params**
 
-* **Success event name**
+  ```typescript
+    {
+         issueToUpdate: {
+              id: string;
+              issueName: string;
+              priority: string;
+              selected: boolean;
+              link: string;
+              editable: boolean;
+                },
+         roomId: string
+    }
+  ```
 
-    None
+- **Success event name**
 
-    
-* **Success event data**
+  None
 
-    None
+- **Success event data**
 
-* **Success callback response**
-     ```typescript
-        {
-          issues: Issue[]
-     ```
+  None
 
-* **Error callback response:**
-     ```typescript
-        {
-          error: string
-        }
-     ```
+- **Success callback response**
 
-* **Notes:**
+  ```typescript
+     {
+       issues: Issue[]
+  ```
 
-    None
+- **Error callback response:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
 
 </details>
 
 **Create Card**
-----
+
 Create new card in existing game/room.
 
 <details>
 
-* **Event**
+- **Event**
 
-    game:card-add
+  game:card-add
 
-*  **Params**
-    ```typescript
-      {
-          "newCard": {
-                id: string;
-                value: string;
-                type: string;
-                shortType: string;
-                selected: boolean;
-                editable: boolean;
-                  },
-           "roomId": string
-      }
-    ```
+- **Params**
 
-* **Success event name**
+  ```typescript
+    {
+        "newCard": {
+              id: string;
+              value: string;
+              type: string;
+              shortType: string;
+              selected: boolean;
+              editable: boolean;
+                },
+         "roomId": string
+    }
+  ```
 
-    None
+- **Success event name**
 
-    
-* **Success event data**
+  None
 
-    None
+- **Success event data**
 
-* **Success callback response**
-     ```typescript
-                {          
-                  card: {
-                      id: string;
-                      value: string;
-                      type: string;
-                      shortType: string;
-                      selected: boolean;
-                      editable: boolean;
-                  }
-                }
-     ```
+  None
 
-* **Error callback:**
-     ```typescript
-          {
-            error: string
-          }
-     ```
+- **Success callback response**
 
-* **Notes:**
+  ```typescript
+  {
+    card: {
+      id: string;
+      value: string;
+      type: string;
+      shortType: string;
+      selected: boolean;
+      editable: boolean;
+    }
+  }
+  ```
 
-    None
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
 
 </details>
 
 **Delete Card**
-----
+
 Delete card from existing game.
 
 <details>
 
-* **Event**
+- **Event**
 
-    game:card-delete
+  game:card-delete
 
-*  **Params**
-    ```typescript
-      {
-           cardId: string,
-           roomId: string
-      }
-    ```
+- **Params**
 
-* **Success event name**
+  ```typescript
+    {
+         cardId: string,
+         roomId: string
+    }
+  ```
 
-    None
+- **Success event name**
 
-    
-* **Success event data**
+  None
 
-    None
+- **Success event data**
 
-* **Success callback response**
-     ```typescript
-                {          
-                  cards: Card[]
-                }
-     ```
+  None
 
-* **Error callback:**
-     ```typescript
-          {
-            error: string
-          }
-     ```
+- **Success callback response**
 
-* **Notes:**
+  ```typescript
+             {
+               cards: Card[]
+             }
+  ```
 
-    None
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
 
 </details>
 
 **Update Card**
-----
+
 Update card parameters.
 
 <details>
 
-* **Event**
+- **Event**
 
-    game:card-update
+  game:card-update
 
-*  **Params**
-    ```typescript
-      {
-           cardToUpdate: string,
-           roomId: string
-      }
-    ```
+- **Params**
 
-* **Success event name**
+  ```typescript
+    {
+         cardToUpdate: string,
+         roomId: string
+    }
+  ```
 
-    None
+- **Success event name**
 
-    
-* **Success event data**
+  None
 
-    None
+- **Success event data**
 
-* **Success callback response**
-     ```typescript
-        {
-          cards: Card[]
-        }
-     ```
+  None
 
-* **Error callback response:**
-     ```typescript
-        {
-          error: string
-        }
-     ```
+- **Success callback response**
 
-* **Notes:**
+  ```typescript
+     {
+       cards: Card[]
+     }
+  ```
 
-    None
+- **Error callback response:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
 
 </details>
