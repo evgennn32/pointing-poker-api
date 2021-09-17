@@ -1,6 +1,7 @@
 import { User } from "./models/User";
 import GameController from "./controllers/GameController";
 import DBController from "./controllers/DBController";
+import GameSettings from "./models/GameSettings";
 import { Issue } from "./models/Issue";
 
 const app = require('express')();
@@ -25,9 +26,16 @@ io.on("connection", socket => {
     console.log(socket.rooms);
   });
 
+  socket.on('game:update-settings', (gameSettings: GameSettings, roomId: string, cb: ({}) => void) => {
+    const {settings, error} = GameController.updateGameSettings(gameSettings, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb(error) : null;
+    }
+    typeof cb === "function" ? cb(settings) : '';
+  });
+
   socket.on('game:join', (roomId: string, cb: ({}) => void) => {
     if (!DBController.gameIsset(roomId)) {
-
       typeof cb === "function" ? cb({error: 'No such game or id is incorrect'}) : null;
     }
     socket.join(roomId);
@@ -42,9 +50,10 @@ io.on("connection", socket => {
       return typeof cb === "function" ? cb(error) : null;
     }
     typeof cb === "function" ? cb(user) : '';
+    const userName = `${user.firstName}${user.lastName ? ' ': ''}${user.lastName}`;
     socket.in(roomId).emit(
       'notification',
-      {message: `${user.firstName} ${user.lastName} just joined the game`}
+      {message: `${userName} just joined the game`}
     )
   });
 

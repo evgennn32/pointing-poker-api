@@ -1,5 +1,6 @@
 import { GameRoomEntity } from "../models/GameRoomEntity";
 import { User } from "../models/User";
+import GameSettings from "../models/GameSettings";
 import { Issue } from "../models/Issue";
 
 export default {
@@ -22,7 +23,10 @@ export default {
   gameIsset: (gameId:string) => {
     return gameId in global.DB.games;
   },
-
+  updateGameSettings: (settings: GameSettings, roomId) => {
+    global.DB.games[roomId].gameSettings = settings;
+    return {settings: global.DB.games[roomId].gameSettings};
+  },
   addUser: (user: User, roomID): {error?: string; user?: User} => {
     if(!global.DB.games[roomID]) {
       return {error: 'No such game'};
