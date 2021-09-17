@@ -75,6 +75,14 @@ io.on("connection", socket => {
     // TODO send all issues to all room clients
   });
 
+  socket.on('game:issue-update', (issueToUpdate: Issue, roomId: string, cb: ({}) => void) => {
+    const {issues, error} = GameController.updateIssue(issueToUpdate, roomId)
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    typeof cb === "function" ? cb({issues}) : '';
+  });
+
   socket.on('game:issue-delete', (issueId: string, roomId: string, cb: ({}) => void) => {
     const {issues, error} = GameController.deleteIssue(issueId, roomId);
     if (error) {
