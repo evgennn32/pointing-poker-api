@@ -49,9 +49,10 @@ io.on("connection", socket => {
       return typeof cb === "function" ? cb(error) : null;
     }
     typeof cb === "function" ? cb(user) : '';
+    const userName = `${user.firstName}${user.lastName ? ' ': ''}${user.lastName}`;
     socket.in(roomId).emit(
       'notification',
-      {message: `${user.firstName} ${user.lastName} just joined the game`}
+      {message: `${userName} just joined the game`}
     )
   });
 
