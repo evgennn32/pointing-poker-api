@@ -30,6 +30,9 @@ export default {
 
     return newGame;
   },
+  deleteGame: (roomId: string) => {
+    DBController.deleteGame(roomId);
+  },
   addUser: (newUser: User, roomId): { user?: User, error?: string } => {
     if (!newUser.firstName) {
       return {error: "Username and room are required"}
@@ -40,5 +43,6 @@ export default {
     newUser.id = createId();
 
     return DBController.addUser(newUser, roomId)
+
   }
 }

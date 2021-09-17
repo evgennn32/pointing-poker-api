@@ -46,6 +46,20 @@ io.on("connection", socket => {
       {message: `${user.firstName} ${user.lastName} just joined the game`}
     )
   });
+  socket.on('game:delete', (roomId: string, cb: ({}) => void) => {
+    try {
+      GameController.deleteGame(roomId);
+    } catch (error) {
+     return typeof cb === "function" ? cb({error: error.message}) : '';
+    } 
+      io.emit({message: `Game with '${global.DB.games[roomId]}' id has been deleted`});
+
+  });
+
+  socket.on('DB:getAllData', ( cb: ({}) => void) => {
+    typeof cb === "function" ? cb(global.DB) : null;
+  });
+
   console.log(socket.id)
 });
 
