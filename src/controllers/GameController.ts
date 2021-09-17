@@ -2,6 +2,7 @@ import { User } from "../models/User";
 import { InitialCards } from "../models/InitialCards";
 import { createId } from "../shared/helpers";
 import DBController from "./DBController";
+import { Issue } from "../models/Issue";
 
 export default {
   createGame: (user: User) => {
@@ -52,10 +53,36 @@ export default {
       return {error: "userId is required"}
     }
     if (!DBController.gameIsset(roomId)) {
-      return {error: "This game no longer exists can't delete user"}
+      return {error: "This game no longer exists, can't delete user"}
     }
 
     return {users: DBController.deleteUser(userId, roomId)};
 
-  }
+  },
+  addIssue: (issue: Issue, roomId): { issue?: Issue, error?: string } => {
+    console.log(issue)
+    if (!issue.issueName) {
+      return {error: "issue name is required"}
+    }
+    if (!roomId) {
+      return {error: "RoomId is required"}
+    }
+    issue.id = createId();
+
+    return DBController.addIssue(issue, roomId);
+  },
+  deleteIssue:(issueId: string, roomId: string): { issues?: Issue[], error?: string } => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!issueId) {
+      return {error: "IssueId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't delete issue"};
+    }
+    const issues = DBController.deleteIssue(issueId, roomId);
+
+    return { issues };
+  },
 }

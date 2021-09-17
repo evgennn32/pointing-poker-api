@@ -1,6 +1,7 @@
 import { User } from "./models/User";
 import GameController from "./controllers/GameController";
 import DBController from "./controllers/DBController";
+import { Issue } from "./models/Issue";
 
 const app = require('express')();
 const http = require('http').Server(app);
@@ -50,9 +51,27 @@ io.on("connection", socket => {
   socket.on('user:delete', (userId: string, roomId: string, cb: ({}) => void) => {
     const {users, error} = GameController.deleteUser(userId, roomId);
     if (error) {
-      return typeof cb === "function" ? cb(error) : null;
+      return typeof cb === "function" ? cb({error}) : null;
     }
     typeof cb === "function" ? cb(users) : '';
+    // TODO send all users to all room clients
+  });
+
+  socket.on('game:issue-add', (newIssue: Issue, roomId: string, cb: ({}) => void) => {
+    const {issue, error} = GameController.addIssue(newIssue, roomId)
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    typeof cb === "function" ? cb({issue}) : '';
+    // TODO send all issues to all room clients
+  });
+
+  socket.on('game:issue-delete', (issueId: string, roomId: string, cb: ({}) => void) => {
+    const {issues, error} = GameController.deleteIssue(issueId, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    typeof cb === "function" ? cb(issues) : '';
     // TODO send all users to all room clients
   });
 

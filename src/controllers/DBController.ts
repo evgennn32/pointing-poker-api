@@ -1,5 +1,6 @@
 import { GameRoomEntity } from "../models/GameRoomEntity";
 import { User } from "../models/User";
+import { Issue } from "../models/Issue";
 
 export default {
   initDB: () => {
@@ -30,10 +31,18 @@ export default {
     return {user};
   },
   deleteUser: (userId: string, roomID: string):  User[] => {
-    console.log(userId);
-    global.DB.games[roomID].users = global.DB.games[roomID].users.filter((user) => user.id !== userId)
-    console.log(global.DB.games[roomID].users)
-    return global.DB.games[roomID].users
-  }
-
+    global.DB.games[roomID].users = global.DB.games[roomID].users.filter((user) => user.id !== userId);
+    return global.DB.games[roomID].users;
+  },
+  addIssue: (issue: Issue, roomID): {error?: string; issue?: Issue} => {
+    if(!global.DB.games[roomID]) {
+      return {error: 'No such game'};
+    }
+    global.DB.games[roomID].issues.push(issue);
+    return {issue};
+  },
+  deleteIssue: (issueId: string, roomId): Issue[] => {
+    global.DB.games[roomId].issues = global.DB.games[roomId].issues.filter((issue) => issue.id !== issueId);
+    return global.DB.games[roomId].issues;
+  },
 }
