@@ -25,7 +25,7 @@ export default {
       },
       users: [user],
       issues: [],
-      cards: InitialCards
+      cards: InitialCards.map( card => ({...card, id: createId()}))
     };
 
     DBController.addGame(newGame);
