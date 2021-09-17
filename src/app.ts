@@ -3,6 +3,7 @@ import GameController from "./controllers/GameController";
 import DBController from "./controllers/DBController";
 import GameSettings from "./models/GameSettings";
 import { Issue } from "./models/Issue";
+import { Card } from "./models/Card";
 
 const app = require('express')();
 const http = require('http').Server(app);
@@ -88,9 +89,37 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    typeof cb === "function" ? cb(issues) : '';
+    typeof cb === "function" ? cb({issues}) : '';
     // TODO send all users to all room clients
   });
+
+  /******************************************************************************************/
+
+
+  socket.on('game:card-add', (newCard: Card, roomId: string, cb: ({}) => void) => {
+    const {card, error} = GameController.addCard(newCard, roomId)
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    typeof cb === "function" ? cb({card}) : '';
+  });
+
+  socket.on('game:card-update', (cardToUpdate: Card, roomId: string, cb: ({}) => void) => {
+    const {cards, error} = GameController.updateCard(cardToUpdate, roomId)
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    typeof cb === "function" ? cb({cards}) : '';
+  });
+
+  socket.on('game:card-delete', (cardId: string, roomId: string, cb: ({}) => void) => {
+    const {cards, error} = GameController.deleteCard(cardId, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    typeof cb === "function" ? cb({cards}) : '';
+  });
+  /******************************************************************************************/
 
   socket.on('game:delete', (roomId: string, cb: ({}) => void) => {
     try {
