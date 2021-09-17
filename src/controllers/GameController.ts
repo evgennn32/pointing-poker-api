@@ -38,11 +38,24 @@ export default {
       return {error: "Username and room are required"}
     }
     if (!roomId) {
-      return {error: "Room are required"}
+      return {error: "RoomId is required"}
     }
     newUser.id = createId();
 
-    return DBController.addUser(newUser, roomId)
+    return DBController.addUser(newUser, roomId);
+  },
+  deleteUser: (userId: string, roomId: string): { users?: User[], error?: string } => {
+    if (!roomId) {
+      return {error: "RoomId is required"}
+    }
+    if (!userId) {
+      return {error: "userId is required"}
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists can't delete user"}
+    }
+
+    return {users: DBController.deleteUser(userId, roomId)};
 
   }
 }
