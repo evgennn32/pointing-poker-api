@@ -24,6 +24,7 @@ const GameController =  {
         timeOut: true,
         gameInProgress: false,
       },
+      gameResults: [],
       users: [user],
       issues: [],
       cards: InitialCards.map( card => ({...card, id: createId()}))
