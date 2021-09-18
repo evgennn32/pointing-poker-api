@@ -6,7 +6,7 @@ import { Issue } from "../models/Issue";
 import GameSettings from "../models/GameSettings";
 import { Card } from "../models/Card";
 
-export default {
+const GameController =  {
   createGame: (user: User) => {
     user.id = createId();
     const gameId = createId();
@@ -38,22 +38,33 @@ export default {
   },
   startGame: (roomId: string) => {
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
     if (!DBController.gameIsset(roomId)) {
-      return {error: "This game no longer exists, can't delete user"}
+      return {error: "This game no longer exists, can't delete user"};
     }
-    // TODO check any issue exists
+    if(!GameController.gameHasIssues(roomId)) {
+      return {error: "There are no issues to vote in the current game"};
+    }
     try {
       DBController.startGame(roomId);
     } catch (e) {
-      return {error: e.message}
+      return {error: e.message};
     }
     try {
       return {gameSettings: DBController.getGameSettings(roomId)}
     } catch (e) {
-      return {error: e.message}
+      return {error: e.message};
     }
+  },
+  gameHasIssues: (roomId: string) => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't delete user"};
+    }
+   return DBController.getIssues(roomId).length;
   },
   updateGameSettings: (settings: GameSettings, roomId): {error?: string; settings?: GameSettings} => {
     if (!settings) {
@@ -170,3 +181,5 @@ export default {
     return { cards };
   },
 }
+
+export default GameController;

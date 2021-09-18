@@ -25,7 +25,7 @@ export default {
     global.DB.games[roomId].gameSettings.gameInProgress = true;
   },
   getGameSettings: (roomId: string): GameSettings => {
-   return  global.DB.games[roomId].settings
+   return  global.DB.games[roomId].gameSettings;
   },
   gameIsset: (gameId:string) => {
     return gameId in global.DB.games;
@@ -51,6 +51,9 @@ export default {
     }
     global.DB.games[roomID].issues.push(issue);
     return {issue};
+  },
+  getIssues: (roomID: string) => {
+    return global.DB.games[roomID].issues
   },
   updateIssue: (updatedIssue: Issue, roomID): {error?: string; issues?: Issue[]} => {
     if(!global.DB.games[roomID]) {
