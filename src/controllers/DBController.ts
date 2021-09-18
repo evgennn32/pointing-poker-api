@@ -21,6 +21,12 @@ export default {
       throw new Error(`The game doesn't exist`);
     }
   },
+  startGame: (roomId: string) => {
+    global.DB.games[roomId].gameSettings.gameInProgress = true;
+  },
+  getGameSettings: (roomId: string): GameSettings => {
+   return  global.DB.games[roomId].settings
+  },
   gameIsset: (gameId:string) => {
     return gameId in global.DB.games;
   },

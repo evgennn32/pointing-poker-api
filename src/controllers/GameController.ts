@@ -36,6 +36,25 @@ export default {
   deleteGame: (roomId: string) => {
     DBController.deleteGame(roomId);
   },
+  startGame: (roomId: string) => {
+    if (!roomId) {
+      return {error: "RoomId is required"}
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't delete user"}
+    }
+    // TODO check any issue exists
+    try {
+      DBController.startGame(roomId);
+    } catch (e) {
+      return {error: e.message}
+    }
+    try {
+      return {gameSettings: DBController.getGameSettings(roomId)}
+    } catch (e) {
+      return {error: e.message}
+    }
+  },
   updateGameSettings: (settings: GameSettings, roomId): {error?: string; settings?: GameSettings} => {
     if (!settings) {
       return {error: "Settings required"}

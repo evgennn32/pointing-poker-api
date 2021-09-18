@@ -146,6 +146,20 @@ io.on("connection", socket => {
       io.emit({message: `Game with '${global.DB.games[roomId]}' id has been deleted`});
   });
 
+  socket.on('game:start', (roomId: string, cb: ({}) => void) => {
+    const {gameSettings, error} = GameController.startGame(roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    if(typeof cb === "function") {
+      cb({success: true});
+    }
+    socket.in(roomId).emit(
+      'game:start',
+      {gameSettings}
+    );
+  });
+
   socket.on('DB:getAllData', ( cb: ({}) => void) => {
     if(typeof cb === "function") {
       cb(global.DB);
