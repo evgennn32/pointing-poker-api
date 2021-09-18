@@ -53,10 +53,19 @@ const GameController =  {
       return {error: e.message};
     }
     try {
-      return {gameSettings: DBController.getGameSettings(roomId)}
+      return {gameSettings: DBController.getGameSettings(roomId)};
     } catch (e) {
       return {error: e.message};
     }
+  },
+  endGame: (roomId: string) => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't end game"};
+    }
+    return {gameResults: DBController.getGameResults(roomId)};
   },
   gameHasIssues: (roomId: string) => {
     if (!roomId) {
@@ -69,22 +78,22 @@ const GameController =  {
   },
   updateGameSettings: (settings: GameSettings, roomId): {error?: string; settings?: GameSettings} => {
     if (!settings) {
-      return {error: "Settings required"}
+      return {error: "Settings are required"};
     }
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
     if (!DBController.gameIsset(roomId)) {
-      return {error: "This game no longer exists, can't update settings"}
+      return {error: "This game no longer exists, can't update settings"};
     }
     return DBController.updateGameSettings(settings, roomId);
   },
   addUser: (newUser: User, roomId): { user?: User, error?: string } => {
     if (!newUser.firstName) {
-      return {error: "Username and room are required"}
+      return {error: "Username and room are required"};
     }
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
     newUser.id = createId();
 
@@ -92,13 +101,13 @@ const GameController =  {
   },
   deleteUser: (userId: string, roomId: string): { users?: User[], error?: string } => {
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
     if (!userId) {
-      return {error: "userId is required"}
+      return {error: "userId is required"};
     }
     if (!DBController.gameIsset(roomId)) {
-      return {error: "This game no longer exists, can't delete user"}
+      return {error: "This game no longer exists, can't delete user"};
     }
 
     return {users: DBController.deleteUser(userId, roomId)};
@@ -106,10 +115,10 @@ const GameController =  {
   },
   addIssue: (issue: Issue, roomId): { issue?: Issue, error?: string } => {
     if (!issue.issueName) {
-      return {error: "issue name is required"}
+      return {error: "issue name is required"};
     }
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
     issue.id = createId();
 
@@ -117,13 +126,13 @@ const GameController =  {
   },
   updateIssue: (issue: Issue, roomId): { issues?: Issue[], error?: string } => {
     if (!issue.issueName) {
-      return {error: "issue name is required"}
+      return {error: "issue name is required"};
     }
     if (!issue.id) {
-      return {error: "issue id is required"}
+      return {error: "issue id is required"};
     }
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
 
     return DBController.updateIssue(issue, roomId);
@@ -145,10 +154,10 @@ const GameController =  {
   },
   addCard: (card: Card, roomId): { card?: Card, error?: string } => {
     if (!card.value) {
-      return {error: "card value is required"}
+      return {error: "card value is required"};
     }
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
     card.id = createId();
 
@@ -156,13 +165,13 @@ const GameController =  {
   },
   updateCard: (card: Card, roomId): { cards?: Card[], error?: string } => {
     if (!card.value) {
-      return {error: "card value is required"}
+      return {error: "card value is required"};
     }
     if (!card.id) {
-      return {error: "card id is required"}
+      return {error: "card id is required"};
     }
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
 
     return DBController.updateCard(card, roomId);

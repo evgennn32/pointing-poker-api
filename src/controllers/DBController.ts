@@ -3,6 +3,7 @@ import { User } from "../models/User";
 import GameSettings from "../models/GameSettings";
 import { Issue } from "../models/Issue";
 import { Card } from "../models/Card";
+import GameResult from "../models/GameResult";
 
 export default {
   initDB: () => {
@@ -26,6 +27,9 @@ export default {
   },
   getGameSettings: (roomId: string): GameSettings => {
    return  global.DB.games[roomId].gameSettings;
+  },
+  getGameResults: (roomId: string): GameResult[] => {
+    return  global.DB.games[roomId].gameResults;
   },
   gameIsset: (gameId:string) => {
     return gameId in global.DB.games;
