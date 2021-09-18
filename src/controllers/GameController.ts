@@ -4,6 +4,7 @@ import { createId } from "../shared/helpers";
 import DBController from "./DBController";
 import { Issue } from "../models/Issue";
 import GameSettings from "../models/GameSettings";
+import { Card } from "../models/Card";
 
 export default {
   createGame: (user: User) => {
@@ -25,7 +26,7 @@ export default {
       },
       users: [user],
       issues: [],
-      cards: InitialCards
+      cards: InitialCards.map( card => ({...card, id: createId()}))
     };
 
     DBController.addGame(newGame);
@@ -110,5 +111,43 @@ export default {
     const issues = DBController.deleteIssue(issueId, roomId);
 
     return { issues };
+  },
+  addCard: (card: Card, roomId): { card?: Card, error?: string } => {
+    if (!card.value) {
+      return {error: "card value is required"}
+    }
+    if (!roomId) {
+      return {error: "RoomId is required"}
+    }
+    card.id = createId();
+
+    return DBController.addCard(card, roomId);
+  },
+  updateCard: (card: Card, roomId): { cards?: Card[], error?: string } => {
+    if (!card.value) {
+      return {error: "card value is required"}
+    }
+    if (!card.id) {
+      return {error: "card id is required"}
+    }
+    if (!roomId) {
+      return {error: "RoomId is required"}
+    }
+
+    return DBController.updateCard(card, roomId);
+  },
+  deleteCard:(cardId: string, roomId: string): { cards?: Card[], error?: string } => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!cardId) {
+      return {error: "CardId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't delete card"};
+    }
+    const cards = DBController.deleteCard(cardId, roomId);
+
+    return { cards };
   },
 }

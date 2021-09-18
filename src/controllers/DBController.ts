@@ -2,6 +2,7 @@ import { GameRoomEntity } from "../models/GameRoomEntity";
 import { User } from "../models/User";
 import GameSettings from "../models/GameSettings";
 import { Issue } from "../models/Issue";
+import { Card } from "../models/Card";
 
 export default {
   initDB: () => {
@@ -57,5 +58,25 @@ export default {
   deleteIssue: (issueId: string, roomId): Issue[] => {
     global.DB.games[roomId].issues = global.DB.games[roomId].issues.filter((issue) => issue.id !== issueId);
     return global.DB.games[roomId].issues;
+  },
+  addCard: (card: Card, roomID): {error?: string; card?: Card} => {
+    if(!global.DB.games[roomID]) {
+      return {error: 'No such game'};
+    }
+    global.DB.games[roomID].cards.push(card);
+    return {card};
+  },
+  updateCard: (updatedCard: Card, roomID): {error?: string; cards?: Card[]} => {
+    if(!global.DB.games[roomID]) {
+      return {error: 'No such game'};
+    }
+    global.DB.games[roomID].cards = global.DB.games[roomID].cards.map(
+      (card) => (card.id === updatedCard.id ? updatedCard : card)
+    );
+    return {cards: global.DB.games[roomID].cards};
+  },
+  deleteCard: (cardId: string, roomId): Card[] => {
+    global.DB.games[roomId].cards = global.DB.games[roomId].cards.filter((card) => card.id !== cardId);
+    return global.DB.games[roomId].cards;
   },
 }
