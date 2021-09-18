@@ -12,7 +12,7 @@ export default {
   addGame: (game: GameRoomEntity) => {
     global.DB.games[game.roomID] = game;
     return game.roomID
-  },  
+  },
   deleteGame: (roomId: string) => {
     if(global.DB.games[roomId] !== undefined){
       delete global.DB.games[roomId];
