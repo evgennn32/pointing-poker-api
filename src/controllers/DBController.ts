@@ -3,6 +3,7 @@ import { User } from "../models/User";
 import GameSettings from "../models/GameSettings";
 import { Issue } from "../models/Issue";
 import { Card } from "../models/Card";
+import GameResult from "../models/GameResult";
 
 export default {
   initDB: () => {
@@ -12,7 +13,7 @@ export default {
   addGame: (game: GameRoomEntity) => {
     global.DB.games[game.roomID] = game;
     return game.roomID
-  },  
+  },
   deleteGame: (roomId: string) => {
     if(global.DB.games[roomId] !== undefined){
       delete global.DB.games[roomId];
@@ -20,6 +21,15 @@ export default {
     else {
       throw new Error(`The game doesn't exist`);
     }
+  },
+  startGame: (roomId: string) => {
+    global.DB.games[roomId].gameSettings.gameInProgress = true;
+  },
+  getGameSettings: (roomId: string): GameSettings => {
+   return  global.DB.games[roomId].gameSettings;
+  },
+  getGameResults: (roomId: string): GameResult[] => {
+    return  global.DB.games[roomId].gameResults;
   },
   gameIsset: (gameId:string) => {
     return gameId in global.DB.games;
@@ -45,6 +55,9 @@ export default {
     }
     global.DB.games[roomID].issues.push(issue);
     return {issue};
+  },
+  getIssues: (roomID: string) => {
+    return global.DB.games[roomID].issues
   },
   updateIssue: (updatedIssue: Issue, roomID): {error?: string; issues?: Issue[]} => {
     if(!global.DB.games[roomID]) {

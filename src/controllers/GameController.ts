@@ -6,7 +6,7 @@ import { Issue } from "../models/Issue";
 import GameSettings from "../models/GameSettings";
 import { Card } from "../models/Card";
 
-export default {
+const GameController =  {
   createGame: (user: User) => {
     user.id = createId();
     const gameId = createId();
@@ -24,6 +24,7 @@ export default {
         timeOut: true,
         gameInProgress: false,
       },
+      gameResults: [],
       users: [user],
       issues: [],
       cards: InitialCards.map( card => ({...card, id: createId()}))
@@ -36,24 +37,63 @@ export default {
   deleteGame: (roomId: string) => {
     DBController.deleteGame(roomId);
   },
-  updateGameSettings: (settings: GameSettings, roomId): {error?: string; settings?: GameSettings} => {
-    if (!settings) {
-      return {error: "Settings required"}
-    }
+  startGame: (roomId: string) => {
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
     if (!DBController.gameIsset(roomId)) {
-      return {error: "This game no longer exists, can't update settings"}
+      return {error: "This game no longer exists, can't delete user"};
+    }
+    if(!GameController.gameHasIssues(roomId)) {
+      return {error: "There are no issues to vote in the current game"};
+    }
+    try {
+      DBController.startGame(roomId);
+    } catch (e) {
+      return {error: e.message};
+    }
+    try {
+      return {gameSettings: DBController.getGameSettings(roomId)};
+    } catch (e) {
+      return {error: e.message};
+    }
+  },
+  endGame: (roomId: string) => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't end game"};
+    }
+    return {gameResults: DBController.getGameResults(roomId)};
+  },
+  gameHasIssues: (roomId: string) => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't delete user"};
+    }
+   return DBController.getIssues(roomId).length;
+  },
+  updateGameSettings: (settings: GameSettings, roomId): {error?: string; settings?: GameSettings} => {
+    if (!settings) {
+      return {error: "Settings are required"};
+    }
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't update settings"};
     }
     return DBController.updateGameSettings(settings, roomId);
   },
   addUser: (newUser: User, roomId): { user?: User, error?: string } => {
     if (!newUser.firstName) {
-      return {error: "Username and room are required"}
+      return {error: "Username and room are required"};
     }
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
     newUser.id = createId();
 
@@ -61,13 +101,13 @@ export default {
   },
   deleteUser: (userId: string, roomId: string): { users?: User[], error?: string } => {
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
     if (!userId) {
-      return {error: "userId is required"}
+      return {error: "userId is required"};
     }
     if (!DBController.gameIsset(roomId)) {
-      return {error: "This game no longer exists, can't delete user"}
+      return {error: "This game no longer exists, can't delete user"};
     }
 
     return {users: DBController.deleteUser(userId, roomId)};
@@ -75,10 +115,10 @@ export default {
   },
   addIssue: (issue: Issue, roomId): { issue?: Issue, error?: string } => {
     if (!issue.issueName) {
-      return {error: "issue name is required"}
+      return {error: "issue name is required"};
     }
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
     issue.id = createId();
 
@@ -86,13 +126,13 @@ export default {
   },
   updateIssue: (issue: Issue, roomId): { issues?: Issue[], error?: string } => {
     if (!issue.issueName) {
-      return {error: "issue name is required"}
+      return {error: "issue name is required"};
     }
     if (!issue.id) {
-      return {error: "issue id is required"}
+      return {error: "issue id is required"};
     }
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
 
     return DBController.updateIssue(issue, roomId);
@@ -114,10 +154,10 @@ export default {
   },
   addCard: (card: Card, roomId): { card?: Card, error?: string } => {
     if (!card.value) {
-      return {error: "card value is required"}
+      return {error: "card value is required"};
     }
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
     card.id = createId();
 
@@ -125,13 +165,13 @@ export default {
   },
   updateCard: (card: Card, roomId): { cards?: Card[], error?: string } => {
     if (!card.value) {
-      return {error: "card value is required"}
+      return {error: "card value is required"};
     }
     if (!card.id) {
-      return {error: "card id is required"}
+      return {error: "card id is required"};
     }
     if (!roomId) {
-      return {error: "RoomId is required"}
+      return {error: "RoomId is required"};
     }
 
     return DBController.updateCard(card, roomId);
@@ -151,3 +191,5 @@ export default {
     return { cards };
   },
 }
+
+export default GameController;
