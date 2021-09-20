@@ -1,6 +1,9 @@
 import { GameRoomEntity } from "../models/GameRoomEntity";
 import { User } from "../models/User";
 import GameSettings from "../models/GameSettings";
+import { Issue } from "../models/Issue";
+import { Card } from "../models/Card";
+import GameResult from "../models/GameResult";
 
 export default {
   initDB: () => {
@@ -10,7 +13,7 @@ export default {
   addGame: (game: GameRoomEntity) => {
     global.DB.games[game.roomID] = game;
     return game.roomID
-  },  
+  },
   deleteGame: (roomId: string) => {
     if(global.DB.games[roomId] !== undefined){
       delete global.DB.games[roomId];
@@ -18,6 +21,15 @@ export default {
     else {
       throw new Error(`The game doesn't exist`);
     }
+  },
+  startGame: (roomId: string) => {
+    global.DB.games[roomId].gameSettings.gameInProgress = true;
+  },
+  getGameSettings: (roomId: string): GameSettings => {
+   return  global.DB.games[roomId].gameSettings;
+  },
+  getGameResults: (roomId: string): GameResult[] => {
+    return  global.DB.games[roomId].gameResults;
   },
   gameIsset: (gameId:string) => {
     return gameId in global.DB.games;
@@ -34,10 +46,50 @@ export default {
     return {user};
   },
   deleteUser: (userId: string, roomID: string):  User[] => {
-    console.log(userId);
     global.DB.games[roomID].users = global.DB.games[roomID].users.filter((user) => user.id !== userId);
-    console.log(global.DB.games[roomID].users);
     return global.DB.games[roomID].users;
-  }
-
+  },
+  addIssue: (issue: Issue, roomID): {error?: string; issue?: Issue} => {
+    if(!global.DB.games[roomID]) {
+      return {error: 'No such game'};
+    }
+    global.DB.games[roomID].issues.push(issue);
+    return {issue};
+  },
+  getIssues: (roomID: string) => {
+    return global.DB.games[roomID].issues
+  },
+  updateIssue: (updatedIssue: Issue, roomID): {error?: string; issues?: Issue[]} => {
+    if(!global.DB.games[roomID]) {
+      return {error: 'No such game'};
+    }
+    global.DB.games[roomID].issues = global.DB.games[roomID].issues.map(
+      (issue) => (issue.id === updatedIssue.id ? updatedIssue : issue)
+    );
+    return {issues: global.DB.games[roomID].issues};
+  },
+  deleteIssue: (issueId: string, roomId): Issue[] => {
+    global.DB.games[roomId].issues = global.DB.games[roomId].issues.filter((issue) => issue.id !== issueId);
+    return global.DB.games[roomId].issues;
+  },
+  addCard: (card: Card, roomID): {error?: string; card?: Card} => {
+    if(!global.DB.games[roomID]) {
+      return {error: 'No such game'};
+    }
+    global.DB.games[roomID].cards.push(card);
+    return {card};
+  },
+  updateCard: (updatedCard: Card, roomID): {error?: string; cards?: Card[]} => {
+    if(!global.DB.games[roomID]) {
+      return {error: 'No such game'};
+    }
+    global.DB.games[roomID].cards = global.DB.games[roomID].cards.map(
+      (card) => (card.id === updatedCard.id ? updatedCard : card)
+    );
+    return {cards: global.DB.games[roomID].cards};
+  },
+  deleteCard: (cardId: string, roomId): Card[] => {
+    global.DB.games[roomId].cards = global.DB.games[roomId].cards.filter((card) => card.id !== cardId);
+    return global.DB.games[roomId].cards;
+  },
 }
