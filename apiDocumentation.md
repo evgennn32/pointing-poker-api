@@ -20,6 +20,7 @@ Usage
   - [Delete Game](https://github.com/evgennn32/pointing-poker-api#delete-game)
   - [Start Game](https://github.com/evgennn32/pointing-poker-api#start-game)
   - [End Game](https://github.com/evgennn32/pointing-poker-api#end-game)
+  - [Create Round In Game](https://github.com/evgennn32/pointing-poker-api#create-round-in-game)
 - **Users**
   - [Create User](https://github.com/evgennn32/pointing-poker-api#create-user)
   - [Delete User](https://github.com/evgennn32/pointing-poker-api#delete-user)
@@ -351,6 +352,69 @@ End running game in the current room.
     "gameResults" {
       issue: Issue;
       voteResults: VoteResult[];
+  }
+  }
+  ```
+
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
+
+</details>
+
+**Create Round In Game**
+
+Create game round in the current room.
+
+<details>
+
+- **Event**
+
+  round:create
+
+- **Params**
+
+  ```typescript
+    {
+         "roomId": string,
+         "issueId": string
+    }
+  ```
+
+- **Success event name**
+
+  round:new
+
+- **Success event data**
+  ```typescript
+  {
+    "round" {
+  roundId: string;
+  issueId: string;
+  roundInProgress: boolean;
+  usersVoteResults: UserVoteResult[];
+  statistics: VoteResult | null;
+  }
+  }
+  ```
+- **Success callback response**
+
+  ```typescript
+  {
+    "round" {
+  roundId: string;
+  issueId: string;
+  roundInProgress: boolean;
+  usersVoteResults: UserVoteResult[];
+  statistics: VoteResult | null;
   }
   }
   ```
