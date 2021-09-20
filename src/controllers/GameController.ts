@@ -5,6 +5,9 @@ import DBController from "./DBController";
 import { Issue } from "../models/Issue";
 import GameSettings from "../models/GameSettings";
 import { Card } from "../models/Card";
+import Round from "../models/Round";
+import UserVoteResult from "../models/UserVoteResult";
+import VoteResult from "../models/VoteResult";
 
 const GameController =  {
   createGame: (user: User) => {
@@ -27,7 +30,8 @@ const GameController =  {
       gameResults: [],
       users: [user],
       issues: [],
-      cards: InitialCards.map( card => ({...card, id: createId()}))
+      cards: InitialCards.map( card => ({...card, id: createId()})),
+      rounds: [],
     };
 
     DBController.addGame(newGame);
@@ -190,6 +194,29 @@ const GameController =  {
 
     return { cards };
   },
+  createInitialVoteResults: (roomId: string): UserVoteResult[] => {
+    const users = DBController.getUsers(roomId);
+    return users.map(user => ({...user, score: null}));
+  },
+  roundCreate: (issueId: string, roomId: string): { round?: Round, error?: string } => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!issueId) {
+      return {error: "issueId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't create round"};
+    }
+    const roundData = {
+      roundId: createId(),
+      issueId,
+      roundInProgress: false,
+      usersVoteResults:GameController.createInitialVoteResults(roomId),
+      statistics: null,
+    }
+    return DBController.roundCreate( roomId, roundData);
+  }
 }
 
 export default GameController;
