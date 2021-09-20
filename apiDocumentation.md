@@ -18,6 +18,8 @@ Usage
   - [Update Game Settings](https://github.com/evgennn32/pointing-poker-api#update-game-settings)
   - [Join Game](https://github.com/evgennn32/pointing-poker-api#join-game)
   - [Delete Game](https://github.com/evgennn32/pointing-poker-api#delete-game)
+  - [Start Game](https://github.com/evgennn32/pointing-poker-api#start-game)
+  - [End Game](https://github.com/evgennn32/pointing-poker-api#end-game)
 - **Users**
   - [Create User](https://github.com/evgennn32/pointing-poker-api#create-user)
   - [Delete User](https://github.com/evgennn32/pointing-poker-api#delete-user)
@@ -234,6 +236,124 @@ Delete existing game.
 - **Success callback response**
 
   None
+
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
+
+</details>
+
+**Start Game**
+
+Start new game in the current room.
+
+<details>
+
+- **Event**
+
+  game:start
+
+- **Params**
+
+  ```typescript
+    {
+        "roomId": string
+    }
+  ```
+
+- **Success event name**
+
+  game:start
+
+- **Success event data**
+
+  ```typescript
+    {
+        "gameSettings": {
+                  scrumMasterAsPlayer: boolean;
+                  changingCardInRoundEnd: boolean;
+                  isTimerNeeded: boolean;
+                  scoreType: string;
+                  scoreTypeShort: string;
+                  roundTime: number;
+                  timeOut: boolean;
+                  gameInProgress: boolean;
+                }
+    }
+
+  ```
+
+- **Success callback response**
+
+  ```typescript
+    {
+        "success": true
+    }
+  ```
+
+- **Error callback response:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
+
+</details>
+
+**End Game**
+
+End running game in the current room.
+
+<details>
+
+- **Event**
+
+  game:end
+
+- **Params**
+
+  ```typescript
+    {
+         "roomId": string
+    }
+  ```
+
+- **Success event name**
+
+  game:end
+
+- **Success event data**
+  ```typescript
+  {
+    "gameResults" {
+      issue: Issue;
+      voteResults: VoteResult[];
+  }
+  }
+  ```
+- **Success callback response**
+
+  ```typescript
+  {
+    "gameResults" {
+      issue: Issue;
+      voteResults: VoteResult[];
+  }
+  }
+  ```
 
 - **Error callback:**
 
