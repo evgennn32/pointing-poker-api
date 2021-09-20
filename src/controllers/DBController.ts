@@ -4,6 +4,8 @@ import GameSettings from "../models/GameSettings";
 import { Issue } from "../models/Issue";
 import { Card } from "../models/Card";
 import GameResult from "../models/GameResult";
+import UserVoteResult from "../models/UserVoteResult";
+import Round from "../models/Round";
 
 export default {
   initDB: () => {
@@ -49,6 +51,9 @@ export default {
     global.DB.games[roomID].users = global.DB.games[roomID].users.filter((user) => user.id !== userId);
     return global.DB.games[roomID].users;
   },
+  getUsers: (roomID: string):  User[] => {
+    return global.DB.games[roomID].users;
+  },
   addIssue: (issue: Issue, roomID): {error?: string; issue?: Issue} => {
     if(!global.DB.games[roomID]) {
       return {error: 'No such game'};
@@ -91,5 +96,14 @@ export default {
   deleteCard: (cardId: string, roomId): Card[] => {
     global.DB.games[roomId].cards = global.DB.games[roomId].cards.filter((card) => card.id !== cardId);
     return global.DB.games[roomId].cards;
+  },
+  roundCreate: (roomId: string, roundData: Round): {round?: Round; error?: string;} => {
+    try {
+      global.DB.games[roomId].rounds.push(roundData);
+      return {round: roundData}
+    } catch (e) {
+      return {error: e.message}
+    }
+
   },
 }

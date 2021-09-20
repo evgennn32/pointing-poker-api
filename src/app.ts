@@ -151,13 +151,16 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
+    // TODO create round and send to all room clients
     if(typeof cb === "function") {
       cb({success: true});
     }
+
     socket.in(roomId).emit(
       'game:start',
       {gameSettings}
     );
+
   });
 
   socket.on('game:end', (roomId: string, cb: ({}) => void) => {
@@ -175,6 +178,20 @@ io.on("connection", socket => {
     setTimeout(() => {
       GameController.deleteGame(roomId);
     },5000);
+  });
+
+  socket.on('round:create', (issueId: string, roomId: string, cb: ({}) => void) => {
+    const {round, error} = GameController.roundCreate(issueId,roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    if(typeof cb === "function") {
+      cb({round});
+    }
+    socket.in(roomId).emit(
+      'round:new',
+      {round}
+    );
   });
 
   socket.on('DB:getAllData', ( cb: ({}) => void) => {
