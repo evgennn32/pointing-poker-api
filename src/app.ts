@@ -194,6 +194,48 @@ io.on("connection", socket => {
     );
   });
 
+  socket.on('round:start', (roundId: string, roomId: string, cb: ({}) => void) => {
+    const {round, error} = GameController.roundStart(roundId,roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    if(typeof cb === "function") {
+      cb({round});
+    }
+    socket.in(roomId).emit(
+      'round:start',
+      {round}
+    );
+  });
+
+  socket.on('round:stop', (roundId: string, roomId: string, cb: ({}) => void) => {
+    const {round, error} = GameController.roundStop(roundId,roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    if(typeof cb === "function") {
+      cb({round});
+    }
+    socket.in(roomId).emit(
+      'round:stop',
+      {round}
+    );
+  });
+
+  socket.on('round:restart', (roundId: string, roomId: string, cb: ({}) => void) => {
+    const {round, error} = GameController.roundRestart(roundId,roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    if(typeof cb === "function") {
+      cb({round});
+    }
+    socket.in(roomId).emit(
+      'round:restart',
+      {round}
+    );
+  });
+
   socket.on('DB:getAllData', ( cb: ({}) => void) => {
     if(typeof cb === "function") {
       cb(global.DB);
