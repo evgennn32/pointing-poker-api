@@ -72,7 +72,10 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb(users);
     }
-    // TODO send all users to all room clients
+    socket.in(roomId).emit(
+      'user:delete',
+      {users}
+    );
   });
 
   socket.on('game:issue-add', (newIssue: Issue, roomId: string, cb: ({}) => void) => {
