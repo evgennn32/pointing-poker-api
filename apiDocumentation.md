@@ -30,6 +30,7 @@ Usage
 - **Users**
   - [Create User](https://github.com/evgennn32/pointing-poker-api#create-user)
   - [Delete User](https://github.com/evgennn32/pointing-poker-api#delete-user)
+  - [User Vote](https://github.com/evgennn32/pointing-poker-api#user-vote)
 - **Issues**
   - [Create Issue](https://github.com/evgennn32/pointing-poker-api#create-issue)
   - [Delete Issue](https://github.com/evgennn32/pointing-poker-api#delete-issue)
@@ -834,6 +835,61 @@ Delete user from existing game.
   ```typescript
   {
     error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
+
+</details>
+
+**User Vote**
+
+Add user's vote to the current game.
+
+<details>
+
+- **Event**
+
+  user:vote
+
+- **Params**
+
+  ```typescript
+    {
+        "userId": string,
+        "roomId": string,
+        "roundId": string,
+        "score": string,
+        "cb": ({})
+    }
+  ```
+
+- **Success event name**
+
+  user:vote
+
+- **Success event data**
+  ```typescript
+  {
+    "round": 
+          roundId: string;
+          issueId: string;
+          roundInProgress: boolean;
+          usersVoteResults: UserVoteResult[];
+          statistics: VoteResult | null;
+  }
+  ```
+- **Success callback response**
+
+  None
+
+- **Error callback:**
+
+  ```typescript
+  {
+    "error": string;
   }
   ```
 
