@@ -127,6 +127,15 @@ const GameController =  {
 
     return DBController.addIssue(issue, roomId);
   },
+  getIssues: (roomId): { issues?: Issue[], error?: string } => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't delete user"};
+    }
+    return DBController.getIssues(roomId);
+  },
   updateIssue: (issue: Issue, roomId): { issues?: Issue[], error?: string } => {
     if (!issue.issueName) {
       return {error: "issue name is required"};
@@ -140,7 +149,6 @@ const GameController =  {
 
     return DBController.updateIssue(issue, roomId);
   },
-
   deleteIssue:(issueId: string, roomId: string): { issues?: Issue[], error?: string } => {
     if (!roomId) {
       return {error: "RoomId is required"};
