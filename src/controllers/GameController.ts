@@ -271,7 +271,16 @@ const GameController =  {
     round.roundInProgress = true;
 
     return { round };
-  }
+  },
+  updateRound: (round: Round, roomId): { rounds?: Round[], error?: string } => {
+    if (!round.roundId) {
+      return {error: "Round id is required"};
+    }
+    if (!round.issueId) {
+      return {error: "Issue id is required"};
+    }
+    return DBController.roundUpdate(round, roomId);
+  },
 
 }
 

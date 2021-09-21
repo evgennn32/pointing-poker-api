@@ -4,6 +4,7 @@ import DBController from "./controllers/DBController";
 import GameSettings from "./models/GameSettings";
 import { Issue } from "./models/Issue";
 import { Card } from "./models/Card";
+import Round from "./models/Round";
 
 const app = require('express')();
 const http = require('http').Server(app);
@@ -234,6 +235,16 @@ io.on("connection", socket => {
       'round:restart',
       {round}
     );
+  });
+
+  socket.on('round:update', (roundToUpdate: Round, roomId: string, cb: ({}) => void) => {
+    const { error} = GameController.updateRound(roundToUpdate, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb(error) : null;
+    }
+    if(typeof cb === "function") {
+      cb(DBController.getRound(roomId, roundToUpdate.roundId));
+    }
   });
 
   socket.on('DB:getAllData', (cb: ({}) => void) => {
