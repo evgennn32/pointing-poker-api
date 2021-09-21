@@ -112,6 +112,20 @@ const GameController =  {
     const users = DBController.getUsers(roomId);
     return {users};
   },
+  getUser: (roomId: string, userId:string): { user?: User, error?: string } => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't get user"};
+    }
+
+    const user = DBController.getUser(roomId, userId);
+  if (!user) {
+    return {error: "No user with such id"};
+  }
+    return {user};
+  },
   deleteUser: (userId: string, roomId: string): { users?: User[], error?: string } => {
     if (!roomId) {
       return {error: "RoomId is required"};
@@ -126,7 +140,26 @@ const GameController =  {
     return {users: DBController.deleteUser(userId, roomId)};
 
   },
-  addIssue: (issue: Issue, roomId): { issue?: Issue, error?: string } => {
+  userVote: (
+    roomId: string,
+    roundId: string,
+    userVoteResult: UserVoteResult): { round?: Round, error?: string }  => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!roundId) {
+      return {error: "roundId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't add vote"};
+    }
+    if (!DBController.roundExists(roomId, roundId)) {
+      return {error: "This round no longer exists, can't add vote"};
+    }
+    return DBController.addUserVote(roomId, roundId, userVoteResult)
+
+  },
+  addIssue: (issue: Issue, roomId: string): { issue?: Issue, error?: string } => {
     if (!issue.issueName) {
       return {error: "issue name is required"};
     }

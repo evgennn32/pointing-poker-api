@@ -54,6 +54,11 @@ const DBConroller = {
   getUsers: (roomID: string):  User[] => {
     return global.DB.games[roomID].users;
   },
+  getUser: (roomID: string, userId: string):  User => {
+    return global.DB.games[roomID].users.filter(
+      (user) => (user.id !== userId)
+    ).shift();
+  },
   addIssue: (issue: Issue, roomID): {error?: string; issue?: Issue} => {
     if(!global.DB.games[roomID]) {
       return {error: 'No such game'};
@@ -104,7 +109,6 @@ const DBConroller = {
     } catch (e) {
       return {error: e.message}
     }
-
   },
   roundStart: (roomId: string, roundId: string): Round => {
     global.DB.games[roomId].rounds = global.DB.games[roomId].rounds.map(
@@ -134,6 +138,20 @@ const DBConroller = {
       round.roundId === roundId
       )
     ).length > 0;
+  },
+  addUserVote:
+    (
+      roomId: string, roundId: string, userVoteResult: UserVoteResult
+    ): {round?: Round; error?: string;} => {
+    try {
+      global.DB.games[roomId].rounds = global.DB.games[roomId].rounds.map(
+        (round) => (round.roundId === roundId ? round.voteResults.push(userVoteResult) : round)
+      );
+      const round = DBConroller.getRound(roomId, roundId);
+      return round ? {round} : {error: 'No round'};
+    } catch (e) {
+      return {error: e.message};
+    }
   },
 
 }
