@@ -7,7 +7,7 @@ import GameResult from "../models/GameResult";
 import UserVoteResult from "../models/UserVoteResult";
 import Round from "../models/Round";
 
-export default {
+const DBConroller = {
   initDB: () => {
     const DB: { games: { [key: string]: GameRoomEntity } } = {games: {}};
     global.DB = DB;
@@ -106,4 +106,36 @@ export default {
     }
 
   },
+  roundStart: (roomId: string, roundId: string): Round => {
+    global.DB.games[roomId].rounds = global.DB.games[roomId].rounds.map(
+      (round) => (
+        round.id === roundId ? {...round, roundInProgress: true} : round
+      )
+    );
+    return DBConroller.getRound(roomId, roundId);
+  },
+  roundStop: (roomId: string, roundId: string): Round => {
+    global.DB.games[roomId].rounds = global.DB.games[roomId].rounds.map(
+      (round) => (
+        round.id === roundId ? {...round, roundInProgress: false} : round
+      )
+    );
+    return DBConroller.getRound(roomId, roundId);
+  },
+  getRound: (roomId: string, roundId: string): Round | null => {
+    const round = global.DB.games[roomId].rounds.filter(round => (round.roundId === roundId));
+    if(round.length){
+      return round[0];
+    }
+    return;
+  },
+  roundExists: (roomId: string, roundId: string): boolean => {
+    return global.DB.games[roomId].rounds.filter(round => (
+      round.roundId === roundId
+      )
+    ).length > 0;
+  },
+
 }
+
+export default DBConroller
