@@ -61,7 +61,14 @@ io.on("connection", socket => {
     socket.in(roomId).emit(
       'notification',
       {message: `${userName} just joined the game`}
-    )
+    );
+    const usersResult = GameController.getUsers(roomId);
+    if(usersResult.users) {
+      socket.in(roomId).emit(
+        'user:add',
+        {users: usersResult.users}
+      );
+    }
   });
 
   socket.on('user:delete', (userId: string, roomId: string, cb: ({}) => void) => {
@@ -72,7 +79,10 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb(users);
     }
-    // TODO send all users to all room clients
+    socket.in(roomId).emit(
+      'user:delete',
+      {users}
+    );
   });
 
   socket.on('game:issue-add', (newIssue: Issue, roomId: string, cb: ({}) => void) => {
@@ -83,8 +93,12 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb({issue});
     }
-    // TODO send all issues to all room clients
-  });
+    const issuesResult = GameController.getIssues(roomId);
+    socket.in(roomId).emit(
+      'game:issue-add',
+      {issues: issuesResult.issues}
+    );
+    });
 
   socket.on('game:issue-update', (issueToUpdate: Issue, roomId: string, cb: ({}) => void) => {
     const {issues, error} = GameController.updateIssue(issueToUpdate, roomId)
@@ -104,7 +118,10 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb({issues});
     }
-    // TODO send all users to all room clients
+    socket.in(roomId).emit(
+      'game:issue-delete',
+      {issues}
+    );
   });
 
   socket.on('game:card-add', (newCard: Card, roomId: string, cb: ({}) => void) => {
@@ -147,20 +164,30 @@ io.on("connection", socket => {
   });
 
   socket.on('game:start', (roomId: string, cb: ({}) => void) => {
+    const issuesResult = GameController.getIssues(roomId);
+    if (issuesResult.error) {
+      return typeof cb === "function" ? cb({error: issuesResult.error}) : null;
+    }
+    if(!issuesResult.issues.length) {
+      return typeof cb === "function" ? cb({error: "There is no 'issues', create an 'issue' and try again"}) : null;
+    }
+    const firsIssue = issuesResult.issues[0];
+    const roundResult = GameController.roundCreate(firsIssue.id, roomId);
+    if (roundResult.error) {
+      return typeof cb === "function" ? cb({error: roundResult.error}) : null;
+    }
     const {gameSettings, error} = GameController.startGame(roomId);
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    // TODO create round and send to all room clients
     if (typeof cb === "function") {
-      cb({success: true});
+      cb({success: true, gameSettings, round: roundResult.round});
     }
 
     socket.in(roomId).emit(
       'game:start',
-      {gameSettings}
+      {gameSettings, round: roundResult.round}
     );
-
   });
 
   socket.on('game:end', (roomId: string, cb: ({}) => void) => {

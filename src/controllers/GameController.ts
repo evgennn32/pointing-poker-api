@@ -91,7 +91,7 @@ const GameController =  {
     }
     return DBController.updateGameSettings(settings, roomId);
   },
-  addUser: (newUser: User, roomId): { user?: User, error?: string } => {
+  addUser: (newUser: User, roomId: string): { user?: User, error?: string } => {
     if (!newUser.firstName) {
       return {error: "Username and room are required"};
     }
@@ -101,6 +101,16 @@ const GameController =  {
     newUser.id = createId();
 
     return DBController.addUser(newUser, roomId);
+  },
+  getUsers:(roomId: string): { users?: User[], error?: string } => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't delete user"};
+    }
+    const users = DBController.getUsers(roomId);
+    return {users};
   },
   deleteUser: (userId: string, roomId: string): { users?: User[], error?: string } => {
     if (!roomId) {
@@ -127,6 +137,15 @@ const GameController =  {
 
     return DBController.addIssue(issue, roomId);
   },
+  getIssues: (roomId): { issues?: Issue[], error?: string } => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't delete user"};
+    }
+    return DBController.getIssues(roomId);
+  },
   updateIssue: (issue: Issue, roomId): { issues?: Issue[], error?: string } => {
     if (!issue.issueName) {
       return {error: "issue name is required"};
@@ -140,7 +159,6 @@ const GameController =  {
 
     return DBController.updateIssue(issue, roomId);
   },
-
   deleteIssue:(issueId: string, roomId: string): { issues?: Issue[], error?: string } => {
     if (!roomId) {
       return {error: "RoomId is required"};
