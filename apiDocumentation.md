@@ -14,6 +14,7 @@ Setup and Running
 Usage
 
 - **Game**
+  - [Get All Data](https://github.com/evgennn32/pointing-poker-api#get-all-data)
   - [Create Game](https://github.com/evgennn32/pointing-poker-api#create-game)
   - [Update Game Settings](https://github.com/evgennn32/pointing-poker-api#update-game-settings)
   - [Join Game](https://github.com/evgennn32/pointing-poker-api#join-game)
@@ -37,6 +38,50 @@ Usage
   - [Create Card](https://github.com/evgennn32/pointing-poker-api#create-Card)
   - [Delete Card](https://github.com/evgennn32/pointing-poker-api#delete-Card)
   - [Update Card](https://github.com/evgennn32/pointing-poker-api#update-Card)
+
+**Get All Data**
+
+Get all existing data in DataBase.
+
+<details>
+
+- **Event**
+
+  DB:getAllData
+
+- **Params**
+
+  None
+
+- **Success event name**
+
+  None
+
+- **Success event data**
+
+  None
+
+- **Success callback response**
+
+  ```typescript
+    {
+      "DB": {
+            games: {
+            [key: string]: GameRoomEntity;
+          };
+        }
+    }
+  ```
+
+- **Error callback response:**
+
+  None
+
+- **Notes:**
+
+  None
+
+</details>
 
 **Create Game**
 
@@ -518,7 +563,7 @@ Start game round in the current room.
 
   ```typescript
   {
-    "round":  
+    "round":
         roundId: string;
         issueId: string;
         roundInProgress: boolean;
@@ -531,7 +576,7 @@ Start game round in the current room.
 
   ```typescript
   {
-    "round": 
+    "round":
         roundId: string;
         issueId: string;
         roundInProgress: boolean;
@@ -581,7 +626,7 @@ Stop game round in the current room.
 
   ```typescript
   {
-    "round":  
+    "round":
         roundId: string;
         issueId: string;
         roundInProgress: boolean;
@@ -594,7 +639,7 @@ Stop game round in the current room.
 
   ```typescript
   {
-    "round": 
+    "round":
         roundId: string;
         issueId: string;
         roundInProgress: boolean;
@@ -644,7 +689,7 @@ Restart game round in the current room.
 
   ```typescript
   {
-    "round":  
+    "round":
         roundId: string;
         issueId: string;
         roundInProgress: boolean;
@@ -657,7 +702,7 @@ Restart game round in the current room.
 
   ```typescript
   {
-    "round": 
+    "round":
         roundId: string;
         issueId: string;
         roundInProgress: boolean;
