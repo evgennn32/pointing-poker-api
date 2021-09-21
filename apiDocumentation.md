@@ -20,7 +20,12 @@ Usage
   - [Delete Game](https://github.com/evgennn32/pointing-poker-api#delete-game)
   - [Start Game](https://github.com/evgennn32/pointing-poker-api#start-game)
   - [End Game](https://github.com/evgennn32/pointing-poker-api#end-game)
-  - [Create Round In Game](https://github.com/evgennn32/pointing-poker-api#create-round-in-game)
+  - **Rounds**
+  - [Create Round](https://github.com/evgennn32/pointing-poker-api#create-round)
+  - [Start Round](https://github.com/evgennn32/pointing-poker-api#update-round)
+  - [Stop Round](https://github.com/evgennn32/pointing-poker-api#create-round)
+  - [Restart Round](https://github.com/evgennn32/pointing-poker-api#update-round)
+  - [Update Round](https://github.com/evgennn32/pointing-poker-api#update-round)
 - **Users**
   - [Create User](https://github.com/evgennn32/pointing-poker-api#create-user)
   - [Delete User](https://github.com/evgennn32/pointing-poker-api#delete-user)
@@ -370,7 +375,7 @@ End running game in the current room.
 
 </details>
 
-**Create Round In Game**
+**Create Round**
 
 Create game round in the current room.
 
@@ -416,6 +421,248 @@ Create game round in the current room.
   usersVoteResults: UserVoteResult[];
   statistics: VoteResult | null;
   }
+  }
+  ```
+
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
+
+</details>
+
+**Update Round**
+
+Update game round in the current room.
+
+<details>
+
+- **Event**
+
+  round:update
+
+- **Params**
+
+  ```typescript
+    {
+         "roomId": string,
+         "roundToUpdate": {
+              roundId: string;
+              issueId: string;
+              roundInProgress: boolean;
+              usersVoteResults: UserVoteResult[];
+              statistics: VoteResult | null;
+         }
+    }
+  ```
+
+- **Success event name**
+
+  None
+
+- **Success event data**
+  None
+- **Success callback response**
+
+  ```typescript
+  {
+    "rounds": Round[]
+  }
+  ```
+
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
+
+</details>
+
+**Start Round**
+
+Start game round in the current room.
+
+<details>
+
+- **Event**
+
+  round:start
+
+- **Params**
+
+  ```typescript
+    {
+         "roomId": string,
+         "roundId": string
+    }
+  ```
+
+- **Success event name**
+
+  round:start
+
+- **Success event data**
+
+  ```typescript
+  {
+    "round":  
+        roundId: string;
+        issueId: string;
+        roundInProgress: boolean;
+        usersVoteResults: UserVoteResult[];
+        statistics: VoteResult | null;
+  }
+  ```
+
+- **Success callback response**
+
+  ```typescript
+  {
+    "round": 
+        roundId: string;
+        issueId: string;
+        roundInProgress: boolean;
+        usersVoteResults: UserVoteResult[];
+        statistics: VoteResult | null;
+  }
+  ```
+
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
+
+</details>
+
+**Stop Round**
+
+Stop game round in the current room.
+
+<details>
+
+- **Event**
+
+  round:stop
+
+- **Params**
+
+  ```typescript
+    {
+         "roomId": string,
+         "roundId": string
+    }
+  ```
+
+- **Success event name**
+
+  round:stop
+
+- **Success event data**
+
+  ```typescript
+  {
+    "round":  
+        roundId: string;
+        issueId: string;
+        roundInProgress: boolean;
+        usersVoteResults: UserVoteResult[];
+        statistics: VoteResult | null;
+  }
+  ```
+
+- **Success callback response**
+
+  ```typescript
+  {
+    "round": 
+        roundId: string;
+        issueId: string;
+        roundInProgress: boolean;
+        usersVoteResults: UserVoteResult[];
+        statistics: VoteResult | null;
+  }
+  ```
+
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
+
+</details>
+
+**Restart Round**
+
+Restart game round in the current room.
+
+<details>
+
+- **Event**
+
+  round:restart
+
+- **Params**
+
+  ```typescript
+    {
+         "roomId": string,
+         "roundId": string
+    }
+  ```
+
+- **Success event name**
+
+  round:restart
+
+- **Success event data**
+
+  ```typescript
+  {
+    "round":  
+        roundId: string;
+        issueId: string;
+        roundInProgress: boolean;
+        usersVoteResults: UserVoteResult[];
+        statistics: VoteResult | null;
+  }
+  ```
+
+- **Success callback response**
+
+  ```typescript
+  {
+    "round": 
+        roundId: string;
+        issueId: string;
+        roundInProgress: boolean;
+        usersVoteResults: UserVoteResult[];
+        statistics: VoteResult | null;
   }
   ```
 
