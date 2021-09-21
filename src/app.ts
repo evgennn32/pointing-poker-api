@@ -61,7 +61,14 @@ io.on("connection", socket => {
     socket.in(roomId).emit(
       'notification',
       {message: `${userName} just joined the game`}
-    )
+    );
+    const usersResult = GameController.getUsers(roomId);
+    if(usersResult.users) {
+      socket.in(roomId).emit(
+        'user:add',
+        {users: usersResult.users}
+      );
+    }
   });
 
   socket.on('user:delete', (userId: string, roomId: string, cb: ({}) => void) => {
