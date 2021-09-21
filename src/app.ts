@@ -83,6 +83,7 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb({issue});
     }
+
     // TODO send all issues to all room clients
   });
 
@@ -104,7 +105,10 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb({issues});
     }
-    // TODO send all users to all room clients
+    socket.in(roomId).emit(
+      'game:issue-delete',
+      {issues}
+    );
   });
 
   socket.on('game:card-add', (newCard: Card, roomId: string, cb: ({}) => void) => {
