@@ -83,9 +83,12 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb({issue});
     }
-
-    // TODO send all issues to all room clients
-  });
+    const issuesResult = GameController.getIssues(roomId);
+    socket.in(roomId).emit(
+      'game:issue-add',
+      {issues: issuesResult.issues}
+    );
+    });
 
   socket.on('game:issue-update', (issueToUpdate: Issue, roomId: string, cb: ({}) => void) => {
     const {issues, error} = GameController.updateIssue(issueToUpdate, roomId)
