@@ -32,14 +32,14 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb(error) : null;
     }
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb(settings);
     }
   });
 
   socket.on('game:join', (roomId: string, cb: ({}) => void) => {
     if (!DBController.gameIsset(roomId)) {
-      if(typeof cb === "function") {
+      if (typeof cb === "function") {
         cb({error: 'No such game or id is incorrect'});
       }
     }
@@ -54,10 +54,10 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb(error) : null;
     }
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb(user);
     }
-    const userName = `${user.firstName}${user.lastName ? ' ': ''}${user.lastName}`;
+    const userName = `${user.firstName}${user.lastName ? ' ' : ''}${user.lastName}`;
     socket.in(roomId).emit(
       'notification',
       {message: `${userName} just joined the game`}
@@ -69,7 +69,7 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb(users);
     }
     // TODO send all users to all room clients
@@ -80,7 +80,7 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb({issue});
     }
     // TODO send all issues to all room clients
@@ -91,7 +91,7 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb({issues});
     }
   });
@@ -101,7 +101,7 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb({issues});
     }
     // TODO send all users to all room clients
@@ -112,7 +112,7 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb({card});
     }
   });
@@ -122,7 +122,7 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb({cards});
     }
   });
@@ -132,7 +132,7 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb({cards});
     }
   });
@@ -141,9 +141,9 @@ io.on("connection", socket => {
     try {
       GameController.deleteGame(roomId);
     } catch (error) {
-     return typeof cb === "function" ? cb({error: error.message}) : '';
+      return typeof cb === "function" ? cb({error: error.message}) : '';
     }
-      io.emit({message: `Game with '${global.DB.games[roomId]}' id has been deleted`});
+    io.emit({message: `Game with '${global.DB.games[roomId]}' id has been deleted`});
   });
 
   socket.on('game:start', (roomId: string, cb: ({}) => void) => {
@@ -152,7 +152,7 @@ io.on("connection", socket => {
       return typeof cb === "function" ? cb({error}) : null;
     }
     // TODO create round and send to all room clients
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb({success: true});
     }
 
@@ -168,7 +168,7 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb({gameResults});
     }
     socket.in(roomId).emit(
@@ -177,15 +177,15 @@ io.on("connection", socket => {
     );
     setTimeout(() => {
       GameController.deleteGame(roomId);
-    },5000);
+    }, 5000);
   });
 
   socket.on('round:create', (issueId: string, roomId: string, cb: ({}) => void) => {
-    const {round, error} = GameController.roundCreate(issueId,roomId);
+    const {round, error} = GameController.roundCreate(issueId, roomId);
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    if(typeof cb === "function") {
+    if (typeof cb === "function") {
       cb({round});
     }
     socket.in(roomId).emit(
@@ -194,8 +194,50 @@ io.on("connection", socket => {
     );
   });
 
-  socket.on('DB:getAllData', ( cb: ({}) => void) => {
-    if(typeof cb === "function") {
+  socket.on('round:start', (roundId: string, roomId: string, cb: ({}) => void) => {
+    const {round, error} = GameController.roundStart(roundId, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    if (typeof cb === "function") {
+      cb({round});
+    }
+    socket.in(roomId).emit(
+      'round:start',
+      {round}
+    );
+  });
+
+  socket.on('round:stop', (roundId: string, roomId: string, cb: ({}) => void) => {
+    const {round, error} = GameController.roundStop(roundId, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    if (typeof cb === "function") {
+      cb({round});
+    }
+    socket.in(roomId).emit(
+      'round:stop',
+      {round}
+    );
+  });
+
+  socket.on('round:restart', (roundId: string, roomId: string, cb: ({}) => void) => {
+    const {round, error} = GameController.roundRestart(roundId, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    if (typeof cb === "function") {
+      cb({round});
+    }
+    socket.in(roomId).emit(
+      'round:restart',
+      {round}
+    );
+  });
+
+  socket.on('DB:getAllData', (cb: ({}) => void) => {
+    if (typeof cb === "function") {
       cb(global.DB);
     }
   });

@@ -7,7 +7,6 @@ import GameSettings from "../models/GameSettings";
 import { Card } from "../models/Card";
 import Round from "../models/Round";
 import UserVoteResult from "../models/UserVoteResult";
-import VoteResult from "../models/VoteResult";
 
 const GameController =  {
   createGame: (user: User) => {
@@ -198,6 +197,15 @@ const GameController =  {
     const users = DBController.getUsers(roomId);
     return users.map(user => ({...user, score: null}));
   },
+  createRoundInitialData: (issueId: string, roomId: string): Round => {
+    return {
+      roundId: createId(),
+      issueId,
+      roundInProgress: false,
+      usersVoteResults: GameController.createInitialVoteResults(roomId),
+      statistics: null,
+    }
+  },
   roundCreate: (issueId: string, roomId: string): { round?: Round, error?: string } => {
     if (!roomId) {
       return {error: "RoomId is required"};
@@ -208,15 +216,63 @@ const GameController =  {
     if (!DBController.gameIsset(roomId)) {
       return {error: "This game no longer exists, can't create round"};
     }
-    const roundData = {
-      roundId: createId(),
-      issueId,
-      roundInProgress: false,
-      usersVoteResults:GameController.createInitialVoteResults(roomId),
-      statistics: null,
+    const roundInitialData = GameController.createRoundInitialData(issueId, roomId);
+    return DBController.roundCreate( roomId, roundInitialData);
+  },
+  roundStart: (roundId: string, roomId: string): { round?: Round, error?: string } => {
+    if (!roomId) {
+      return {error: "roomId is required"};
     }
-    return DBController.roundCreate( roomId, roundData);
+    if (!roundId) {
+      return {error: "roundId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't start round"};
+    }
+    if(!DBController.roundExists(roundId, roomId)) {
+      return {error: "No round with such id"};
+    }
+    const round = DBController.roundStart(roundId, roomId);
+
+    return { round };
+  },
+  roundStop: (roundId: string, roomId: string): { round?: Round, error?: string } => {
+    if (!roomId) {
+      return {error: "roomId is required"};
+    }
+    if (!roundId) {
+      return {error: "roundId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't stop round"};
+    }
+    if(!DBController.roundExists(roundId, roomId)) {
+      return {error: "No round with such id"};
+    }
+    const round = DBController.roundStop(roundId, roomId);
+
+    // TODO create round statistics
+
+    return { round };
+  },
+  roundRestart: (roundId: string, roomId: string): { round?: Round, error?: string } => {
+    if (!roomId) {
+      return {error: "roomId is required"};
+    }
+    if (!roundId) {
+      return {error: "roundId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't restart round"};
+    }
+    const roundToReset = DBController.getRound(roundId, roomId);
+    const round = GameController.createRoundInitialData(roundToReset.issueId, roundId);
+    round.roundId = roundToReset.roundId;
+    round.roundInProgress = true;
+
+    return { round };
   }
+
 }
 
 export default GameController;
