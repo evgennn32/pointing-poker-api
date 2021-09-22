@@ -85,6 +85,23 @@ io.on("connection", socket => {
     );
   });
 
+  socket.on('user:vote',
+    (userId: string, roomId: string, roundId:string, score: string, cb: ({}) => void) => {
+    const {user, error} = GameController.getUser(userId, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    user.score = score;
+    const result = GameController.userVote(roomId, roundId, user);
+    if (result.error) {
+      return typeof cb === "function" ? cb({error: result.error}) : null;
+    }
+    socket.in(roomId).emit(
+      'user:vote',
+      {round: result.round}
+    );
+  });
+
   socket.on('game:issue-add', (newIssue: Issue, roomId: string, cb: ({}) => void) => {
     const {issue, error} = GameController.addIssue(newIssue, roomId)
     if (error) {
