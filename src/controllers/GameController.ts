@@ -244,6 +244,19 @@ const GameController =  {
 
     return { cards };
   },
+  getCardByValue: (roomId: string, cardValue ) => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!cardValue) {
+      return {error: "CardId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't get card"};
+    }
+    return DBController.getCardByValue(roomId, cardValue);
+
+  },
   createInitialVoteResults: (roomId: string): UserVoteResult[] => {
     const users = DBController.getUsers(roomId);
     return users.map(user => ({...user, score: null}));
@@ -297,14 +310,25 @@ const GameController =  {
     if (!DBController.gameIsset(roomId)) {
       return {error: "This game no longer exists, can't stop round"};
     }
-    if(!DBController.roundExists(roundId, roomId)) {
+    if(!DBController.roundExists(roomId, roundId)) {
       return {error: "No round with such id"};
     }
     const round = DBController.roundStop(roundId, roomId);
+    const roundStatistics = []
+    const calculatedStatistics = GameController.calculateRoundStatistics(round.usersVoteResults);
+    for(let key in calculatedStatistics) {
+      if (calculatedStatistics.hasOwnProperty(key)){
+        const singleResult = {
+          card: GameController.getCardByValue(roomId, key),
+          value: calculatedStatistics[key],
+        }
+        roundStatistics.push(singleResult)
+      }
+    }
+    round.statistics = roundStatistics;
+    const roundWithStatistics = DBController.roundUpdate(roomId, round);
 
-    // TODO create round statistics
-
-    return { round };
+    return { round: roundWithStatistics };
   },
   roundRestart: (roundId: string, roomId: string): { round?: Round, error?: string } => {
     if (!roomId) {
@@ -322,8 +346,24 @@ const GameController =  {
     round.roundInProgress = true;
 
     return { round };
-  }
+  },
+  calculateRoundStatistics: (voteResults: UserVoteResult[]): any  => {
+    const statistics = {}
+    voteResults.forEach(result => {
 
+      if(statistics[result.score]) {
+        statistics[result.score] += 1
+      } else {
+        statistics[result.score] = 1;
+      }
+    })
+    for (let key in statistics) {
+      const percentValue = statistics[key]*100/voteResults.length
+      statistics[key] = `${percentValue.toFixed(1)}%`
+    }
+
+    return statistics;
+  },
 }
 
 export default GameController;

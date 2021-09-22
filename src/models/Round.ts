@@ -6,5 +6,5 @@ export  default interface Round {
   issueId: string;
   roundInProgress: boolean;
   usersVoteResults: UserVoteResult[];
-  statistics: VoteResult | null;
+  statistics: VoteResult[] | null;
 }
