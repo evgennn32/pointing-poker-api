@@ -243,7 +243,7 @@ io.on("connection", socket => {
       return typeof cb === "function" ? cb(error) : null;
     }
     if(typeof cb === "function") {
-      cb(DBController.getRound(roomId, roundToUpdate.roundId));
+      cb(roundToUpdate);
     }
   });
 
