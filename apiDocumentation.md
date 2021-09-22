@@ -519,7 +519,13 @@ Update game round in the current room.
 
   ```typescript
   {
-    "rounds": Round[]
+       "roundToUpdate": {
+              roundId: string;
+              issueId: string;
+              roundInProgress: boolean;
+              usersVoteResults: UserVoteResult[];
+              statistics: VoteResult | null;
+         }
   }
   ```
 
@@ -873,7 +879,7 @@ Add user's vote to the current game.
 - **Success event data**
   ```typescript
   {
-    "round": 
+    "round":
           roundId: string;
           issueId: string;
           roundInProgress: boolean;
