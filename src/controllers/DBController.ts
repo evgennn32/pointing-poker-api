@@ -166,7 +166,6 @@ const DBConroller = {
       return {error: e.message};
     }
   },
-
 }
 
 export default DBConroller

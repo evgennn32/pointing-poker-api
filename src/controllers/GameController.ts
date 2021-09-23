@@ -364,6 +364,15 @@ const GameController =  {
 
     return statistics;
   },
+  updateRound: (round: Round, roomId): { round?: Round, error?: string } => {
+    if (!round.roundId) {
+      return {error: "Round id is required"};
+    }
+    if (!round.issueId) {
+      return {error: "Issue id is required"};
+    }
+    return {round: DBController.roundUpdate(roomId, round)};
+  },
 }
 
 export default GameController;
