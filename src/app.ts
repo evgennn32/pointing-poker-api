@@ -282,12 +282,12 @@ io.on("connection", socket => {
   });
 
   socket.on('round:update', (roundToUpdate: Round, roomId: string, cb: ({}) => void) => {
-    const { error} = GameController.updateRound(roundToUpdate, roomId);
+    const {error, round} = GameController.updateRound(roundToUpdate, roomId);
     if (error) {
       return typeof cb === "function" ? cb(error) : null;
     }
     if(typeof cb === "function") {
-      cb(roundToUpdate);
+      cb(round);
     }
   });
 
