@@ -59,7 +59,7 @@ const DBConroller = {
       (user) => (user.id !== userId)
     ).shift();
   },
-  addIssue: (issue: Issue, roomID): {error?: string; issue?: Issue} => {
+  addIssue: (issue: Issue, roomID: string): {error?: string; issue?: Issue} => {
     if(!global.DB.games[roomID]) {
       return {error: 'No such game'};
     }
@@ -69,7 +69,7 @@ const DBConroller = {
   getIssues: (roomID: string) => {
     return global.DB.games[roomID].issues
   },
-  updateIssue: (updatedIssue: Issue, roomID): {error?: string; issues?: Issue[]} => {
+  updateIssue: (updatedIssue: Issue, roomID: string): {error?: string; issues?: Issue[]} => {
     if(!global.DB.games[roomID]) {
       return {error: 'No such game'};
     }
@@ -78,18 +78,18 @@ const DBConroller = {
     );
     return {issues: global.DB.games[roomID].issues};
   },
-  deleteIssue: (issueId: string, roomId): Issue[] => {
+  deleteIssue: (issueId: string, roomId: string): Issue[] => {
     global.DB.games[roomId].issues = global.DB.games[roomId].issues.filter((issue) => issue.id !== issueId);
     return global.DB.games[roomId].issues;
   },
-  addCard: (card: Card, roomID): {error?: string; card?: Card} => {
+  addCard: (card: Card, roomID: string): {error?: string; card?: Card} => {
     if(!global.DB.games[roomID]) {
       return {error: 'No such game'};
     }
     global.DB.games[roomID].cards.push(card);
     return {card};
   },
-  updateCard: (updatedCard: Card, roomID): {error?: string; cards?: Card[]} => {
+  updateCard: (updatedCard: Card, roomID: string): {error?: string; cards?: Card[]} => {
     if(!global.DB.games[roomID]) {
       return {error: 'No such game'};
     }
@@ -98,9 +98,16 @@ const DBConroller = {
     );
     return {cards: global.DB.games[roomID].cards};
   },
-  deleteCard: (cardId: string, roomId): Card[] => {
+  deleteCard: (cardId: string, roomId: string): Card[] => {
     global.DB.games[roomId].cards = global.DB.games[roomId].cards.filter((card) => card.id !== cardId);
     return global.DB.games[roomId].cards;
+  },
+  getCardByValue: (roomId: string, cardValue: string): Card | null => {
+    const filteredCards = global.DB.games[roomId].cards.filter((card) => card.value === cardValue);
+    if(filteredCards.length){
+      return filteredCards[0];
+    }
+    return;
   },
   roundCreate: (roomId: string, roundData: Round): {round?: Round; error?: string;} => {
     try {
@@ -109,6 +116,12 @@ const DBConroller = {
     } catch (e) {
       return {error: e.message}
     }
+  },
+  roundUpdate: (roomId: string, updatedRound: Round) => {
+    global.DB.games[roomId].rounds = global.DB.games[roomId].rounds.map(
+      (round) => (round.roundId === updatedRound.roundId ? updatedRound : round)
+    );
+    return DBConroller.getRound(roomId, updatedRound.roundId);
   },
   roundStart: (roomId: string, roundId: string): Round => {
     global.DB.games[roomId].rounds = global.DB.games[roomId].rounds.map(
