@@ -135,16 +135,6 @@ const DBConroller = {
       )
     ).length > 0;
   },
-  roundUpdate: (updatedRound: Round, roomID): {error?: string; rounds?: Round[]} => {
-    if(!global.DB.rounds[roomID]) {
-      return {error: 'No such game'};
-    }
-    global.DB.games[roomID].rounds = global.DB.games[roomID].rounds.map(
-      (round) => (round.roundId === updatedRound.roundId ? updatedRound : round)
-    );
-    return {rounds: global.DB.games[roomID].rounds};
-  },
-
 }
 
 export default DBConroller
