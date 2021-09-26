@@ -21,9 +21,10 @@ app.get('/', (req, res) => {
 });
 
 io.on("connection", socket => {
-  socket.on("create:game", (user: User) => {
+  socket.on("create:game", (user: User, cb: ({}) => void) => {
     const newGame = GameController.createGame(user);
     socket.join(newGame.roomID);
+    cb({game: newGame});
     socket.emit("game:created", newGame);
     console.log(socket.rooms);
   });
