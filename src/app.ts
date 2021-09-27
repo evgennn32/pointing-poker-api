@@ -32,10 +32,10 @@ io.on("connection", socket => {
   socket.on('game:update-settings', (gameSettings: GameSettings, roomId: string, cb: ({}) => void) => {
     const {settings, error} = GameController.updateGameSettings(gameSettings, roomId);
     if (error) {
-      return typeof cb === "function" ? cb(error) : null;
+      return typeof cb === "function" ? cb({error}) : null;
     }
     if (typeof cb === "function") {
-      cb(settings);
+      cb({settings});
     }
   });
 
