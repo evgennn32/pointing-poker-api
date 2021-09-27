@@ -15,7 +15,7 @@ const GameController =  {
     const newGame = {
       roomName: `Spring ${Object.getOwnPropertyNames(global.DB.games).length + 1}`,
       roomID: gameId,
-      scramMuster: user,
+      scrumMaster: user,
       gameSettings: {
         scrumMasterAsPlayer: true,
         changingCardInRoundEnd: false,
