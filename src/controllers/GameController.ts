@@ -40,6 +40,15 @@ const GameController =  {
   deleteGame: (roomId: string) => {
     DBController.deleteGame(roomId);
   },
+  getGame: (roomId: string)  => {
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists"};
+    }
+    return {game: DBController.getGame(roomId)};
+  },
   startGame: (roomId: string) => {
     if (!roomId) {
       return {error: "RoomId is required"};

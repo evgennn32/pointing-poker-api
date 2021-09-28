@@ -16,7 +16,7 @@ const DBConroller = {
     global.DB.games[game.roomID] = game;
     return game.roomID
   },
-  deleteGame: (roomId: string) => {
+  deleteGame: (roomId: string): void => {
     if(global.DB.games[roomId] !== undefined){
       delete global.DB.games[roomId];
     }
@@ -24,7 +24,10 @@ const DBConroller = {
       throw new Error(`The game doesn't exist`);
     }
   },
-  startGame: (roomId: string) => {
+  getGame: (roomId: string): GameRoomEntity => {
+    return global.DB.games[roomId];
+  },
+  startGame: (roomId: string): void => {
     global.DB.games[roomId].gameSettings.gameInProgress = true;
   },
   getGameSettings: (roomId: string): GameSettings => {
