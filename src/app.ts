@@ -4,6 +4,7 @@ import DBController from "./controllers/DBController";
 import GameSettings from "./models/GameSettings";
 import { Issue } from "./models/Issue";
 import { Card } from "./models/Card";
+import Round from "./models/Round";
 
 const app = require('express')();
 const http = require('http').Server(app);
@@ -20,9 +21,10 @@ app.get('/', (req, res) => {
 });
 
 io.on("connection", socket => {
-  socket.on("create:game", (user: User) => {
+  socket.on("create:game", (user: User, cb: ({}) => void) => {
     const newGame = GameController.createGame(user);
     socket.join(newGame.roomID);
+    cb({game: newGame});
     socket.emit("game:created", newGame);
     console.log(socket.rooms);
   });
@@ -30,38 +32,54 @@ io.on("connection", socket => {
   socket.on('game:update-settings', (gameSettings: GameSettings, roomId: string, cb: ({}) => void) => {
     const {settings, error} = GameController.updateGameSettings(gameSettings, roomId);
     if (error) {
-      return typeof cb === "function" ? cb(error) : null;
+      return typeof cb === "function" ? cb({error}) : null;
     }
     if (typeof cb === "function") {
-      cb(settings);
+      cb({settings});
     }
   });
 
   socket.on('game:join', (roomId: string, cb: ({}) => void) => {
     if (!DBController.gameIsset(roomId)) {
-      if (typeof cb === "function") {
-        cb({error: 'No such game or id is incorrect'});
-      }
+      return cb({error: 'No such game or URL is incorrect'});
+    }
+    const {game, error} = GameController.getGame(roomId);
+    if (error) {
+      return typeof cb === "function" ? cb(error) : null;
+    }
+    if (typeof cb === "function") {
+      cb({game});
     }
     socket.join(roomId);
   });
 
   socket.on('user:create', (newUser: User, roomId: string, cb: ({}) => void) => {
+    console.log("user request");
     if (!DBController.gameIsset(roomId)) {
+      console.log("59 This game no longer exists", `-${roomId}-`);
       return cb({error: 'This game no longer exists'});
     }
     const {user, error} = GameController.addUser(newUser, roomId)
     if (error) {
+      console.log(" 64 This game no longer exists", error);
       return typeof cb === "function" ? cb(error) : null;
     }
     if (typeof cb === "function") {
-      cb(user);
+      console.log("new user = ", user.id);
+      cb({user});
     }
     const userName = `${user.firstName}${user.lastName ? ' ' : ''}${user.lastName}`;
     socket.in(roomId).emit(
       'notification',
       {message: `${userName} just joined the game`}
-    )
+    );
+    const usersResult = GameController.getUsers(roomId);
+    if(usersResult.users) {
+      socket.in(roomId).emit(
+        'user:add',
+        {users: usersResult.users}
+      );
+    }
   });
 
   socket.on('user:delete', (userId: string, roomId: string, cb: ({}) => void) => {
@@ -72,7 +90,27 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb(users);
     }
-    // TODO send all users to all room clients
+    socket.in(roomId).emit(
+      'user:delete',
+      {users}
+    );
+  });
+
+  socket.on('user:vote',
+    (userId: string, roomId: string, roundId:string, score: string, cb: ({}) => void) => {
+    const {user, error} = GameController.getUser(userId, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    user.score = score;
+    const result = GameController.userVote(roomId, roundId, user);
+    if (result.error) {
+      return typeof cb === "function" ? cb({error: result.error}) : null;
+    }
+    socket.in(roomId).emit(
+      'user:vote',
+      {round: result.round}
+    );
   });
 
   socket.on('game:issue-add', (newIssue: Issue, roomId: string, cb: ({}) => void) => {
@@ -83,8 +121,12 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb({issue});
     }
-    // TODO send all issues to all room clients
-  });
+    const issuesResult = GameController.getIssues(roomId);
+    socket.in(roomId).emit(
+      'game:issue-add',
+      {issues: issuesResult.issues}
+    );
+    });
 
   socket.on('game:issue-update', (issueToUpdate: Issue, roomId: string, cb: ({}) => void) => {
     const {issues, error} = GameController.updateIssue(issueToUpdate, roomId)
@@ -104,7 +146,10 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb({issues});
     }
-    // TODO send all users to all room clients
+    socket.in(roomId).emit(
+      'game:issue-delete',
+      {issues}
+    );
   });
 
   socket.on('game:card-add', (newCard: Card, roomId: string, cb: ({}) => void) => {
@@ -147,20 +192,30 @@ io.on("connection", socket => {
   });
 
   socket.on('game:start', (roomId: string, cb: ({}) => void) => {
+    const issuesResult = GameController.getIssues(roomId);
+    if (issuesResult.error) {
+      return typeof cb === "function" ? cb({error: issuesResult.error}) : null;
+    }
+    if(!issuesResult.issues.length) {
+      return typeof cb === "function" ? cb({error: "There is no 'issues', create an 'issue' and try again"}) : null;
+    }
+    const firsIssue = issuesResult.issues[0];
+    const roundResult = GameController.roundCreate(firsIssue.id, roomId);
+    if (roundResult.error) {
+      return typeof cb === "function" ? cb({error: roundResult.error}) : null;
+    }
     const {gameSettings, error} = GameController.startGame(roomId);
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    // TODO create round and send to all room clients
     if (typeof cb === "function") {
-      cb({success: true});
+      cb({success: true, gameSettings, round: roundResult.round});
     }
 
     socket.in(roomId).emit(
       'game:start',
-      {gameSettings}
+      {gameSettings, round: roundResult.round}
     );
-
   });
 
   socket.on('game:end', (roomId: string, cb: ({}) => void) => {
@@ -234,6 +289,16 @@ io.on("connection", socket => {
       'round:restart',
       {round}
     );
+  });
+
+  socket.on('round:update', (roundToUpdate: Round, roomId: string, cb: ({}) => void) => {
+    const {error, round} = GameController.updateRound(roundToUpdate, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb(error) : null;
+    }
+    if(typeof cb === "function") {
+      cb(round);
+    }
   });
 
   socket.on('DB:getAllData', (cb: ({}) => void) => {

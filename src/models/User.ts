@@ -6,5 +6,5 @@ export interface User {
   position: string;
   ableToDelete: boolean;
   score: string;
-  scramMaster: boolean;
+  scrumMaster: boolean;
 }
