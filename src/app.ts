@@ -65,7 +65,6 @@ io.on("connection", socket => {
       return typeof cb === "function" ? cb(error) : null;
     }
     if (typeof cb === "function") {
-      console.log("new user = ", user.id);
       cb({user});
     }
     const userName = `${user.firstName}${user.lastName ? ' ' : ''}${user.lastName}`;
@@ -76,7 +75,7 @@ io.on("connection", socket => {
     const usersResult = GameController.getUsers(roomId);
     if(usersResult.users) {
       socket.in(roomId).emit(
-        'user:add',
+        'game:users-update',
         {users: usersResult.users}
       );
     }
@@ -91,7 +90,7 @@ io.on("connection", socket => {
       cb(users);
     }
     socket.in(roomId).emit(
-      'user:delete',
+      'game:users-update',
       {users}
     );
   });
