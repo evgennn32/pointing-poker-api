@@ -309,6 +309,12 @@ io.on("connection", socket => {
   console.log(socket.id)
 });
 
+io.of("/game").on("connection", (socket) => {
+  socket.on("start", () => {
+      io.of("/game").emit("start game");
+  });
+});
+
 http.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}/`);
 });
