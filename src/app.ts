@@ -121,12 +121,11 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb({issue});
     }
-    const issuesResult = GameController.getIssues(roomId);
-    socket.in(roomId).emit(
-      'game:issue-add',
-      {issues: issuesResult.issues}
-    );
-    });
+    const result = GameController.getIssues(roomId);
+    if (result && !result.error) {
+      socket.in(roomId).emit('game:issues-update', result);
+    }
+  });
 
   socket.on('game:issue-update', (issueToUpdate: Issue, roomId: string, cb: ({}) => void) => {
     const {issues, error} = GameController.updateIssue(issueToUpdate, roomId)
@@ -136,6 +135,7 @@ io.on("connection", socket => {
     if (typeof cb === "function") {
       cb({issues});
     }
+    socket.in(roomId).emit('game:issues-update', {issues});
   });
 
   socket.on('game:issue-delete', (issueId: string, roomId: string, cb: ({}) => void) => {
@@ -147,7 +147,7 @@ io.on("connection", socket => {
       cb({issues});
     }
     socket.in(roomId).emit(
-      'game:issue-delete',
+      'game:issues-update',
       {issues}
     );
   });
