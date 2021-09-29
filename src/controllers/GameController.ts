@@ -186,7 +186,7 @@ const GameController =  {
     if (!DBController.gameIsset(roomId)) {
       return {error: "This game no longer exists, can't delete user"};
     }
-    return DBController.getIssues(roomId);
+    return { issues: DBController.getIssues(roomId) };
   },
   updateIssue: (issue: Issue, roomId): { issues?: Issue[], error?: string } => {
     if (!issue.issueName) {
