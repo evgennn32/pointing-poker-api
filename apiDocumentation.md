@@ -107,7 +107,8 @@ Creates a new game.
                   ableToDelete: boolean;
                   score: string;
                   scramMaster: boolean;
-                }
+                },
+        "cb": ({})
     }
   ```
 
@@ -133,7 +134,19 @@ Creates a new game.
 
 - **Success callback response**
 
-  None
+  ```typescript
+   {
+       "game": {
+                   roomName: string;
+                   roomID: string;
+                   scramMuster: User,
+                   gameSettings: GameSettings;
+                   users: User[];
+                   issues: Issue[];
+                   cards: Card[];
+                 }
+   }
+  ```
 
 - **Error callback response:**
 
@@ -185,7 +198,7 @@ Update the game settings options.
 
   ```typescript
   {
-    settings: {
+    "cb": {
       scrumMasterAsPlayer: boolean;
       changingCardInRoundEnd: boolean;
       isTimerNeeded: boolean;
@@ -202,7 +215,7 @@ Update the game settings options.
 
   ```typescript
   {
-    error: string;
+    "cb": {error};
   }
   ```
 
@@ -239,13 +252,17 @@ Join existing game.
 
 - **Success callback response**
 
-  None
+  ```typescript
+  {
+    "cb": {game};
+  }
+  ```
 
 - **Error callback response:**
 
   ```typescript
   {
-    error: "No such game or id is incorrect";
+    error: "No such game or URL is incorrect";
   }
   ```
 
