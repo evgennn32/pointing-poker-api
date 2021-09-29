@@ -16,12 +16,13 @@ const DBConroller = {
     global.DB.games[game.roomID] = game;
     return game.roomID
   },
-  deleteGame: (roomId: string): void => {
-    if(global.DB.games[roomId] !== undefined){
+  deleteGame: (roomId: string): { success?: true; error?: string } => {
+    if (global.DB.games[roomId] !== undefined) {
       delete global.DB.games[roomId];
+      return {success: true};
     }
     else {
-      throw new Error(`The game doesn't exist`);
+      return { error: "The game doesn't exist" };
     }
   },
   getGame: (roomId: string): GameRoomEntity => {
