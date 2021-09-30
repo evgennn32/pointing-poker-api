@@ -130,7 +130,7 @@ const DBConroller = {
   roundStart: (roomId: string, roundId: string): Round => {
     global.DB.games[roomId].rounds = global.DB.games[roomId].rounds.map(
       (round) => (
-        round.id === roundId ? {...round, roundInProgress: true} : round
+        round.roundId === roundId ? {...round, roundInProgress: true} : round
       )
     );
     return DBConroller.getRound(roomId, roundId);
@@ -150,7 +150,7 @@ const DBConroller = {
     }
     return;
   },
-  roundExists: (roomId: string, roundId: string): boolean => {
+  roundExists: (roundId: string, roomId: string): boolean => {
     return global.DB.games[roomId].rounds.filter(round => (
       round.roundId === roundId
       )

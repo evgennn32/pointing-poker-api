@@ -312,7 +312,7 @@ const GameController =  {
     if(!DBController.roundExists(roundId, roomId)) {
       return {error: "No round with such id"};
     }
-    const round = DBController.roundStart(roundId, roomId);
+    const round = DBController.roundStart(roomId, roundId);
 
     return { round };
   },

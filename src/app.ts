@@ -266,7 +266,7 @@ io.on("connection", socket => {
       cb({round});
     }
     socket.in(roomId).emit(
-      'round:start',
+      'round:update',
       {round}
     );
   });
@@ -280,7 +280,7 @@ io.on("connection", socket => {
       cb({round});
     }
     socket.in(roomId).emit(
-      'round:stop',
+      'round:update',
       {round}
     );
   });
@@ -294,7 +294,7 @@ io.on("connection", socket => {
       cb({round});
     }
     socket.in(roomId).emit(
-      'round:restart',
+      'round:update',
       {round}
     );
   });
@@ -307,6 +307,10 @@ io.on("connection", socket => {
     if(typeof cb === "function") {
       cb(round);
     }
+    socket.in(roomId).emit(
+      'round:update',
+      {round}
+    );
   });
 
   socket.on('DB:getAllData', (cb: ({}) => void) => {
