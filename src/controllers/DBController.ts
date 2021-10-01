@@ -59,9 +59,9 @@ const DBConroller = {
     return global.DB.games[roomID].users;
   },
   getUser: (roomID: string, userId: string):  User => {
-    return global.DB.games[roomID].users.filter(
-      (user) => (user.id !== userId)
-    ).shift();
+    return global.DB.games[roomID].users.find(
+      (user) => (user.id === userId)
+    );
   },
   addIssue: (issue: Issue, roomID: string): {error?: string; issue?: Issue} => {
     if(!global.DB.games[roomID]) {
@@ -144,13 +144,9 @@ const DBConroller = {
     return DBConroller.getRound(roomId, roundId);
   },
   getRound: (roomId: string, roundId: string): Round | null => {
-    const round = global.DB.games[roomId].rounds.filter(round => (round.roundId === roundId));
-    if(round.length){
-      return round[0];
-    }
-    return;
+    return global.DB.games[roomId].rounds.find(round => (round.roundId === roundId));
   },
-  roundExists: (roundId: string, roomId: string): boolean => {
+  roundExists: (roomId: string, roundId: string): boolean => {
     return global.DB.games[roomId].rounds.filter(round => (
       round.roundId === roundId
       )
@@ -161,11 +157,13 @@ const DBConroller = {
       roomId: string, roundId: string, userVoteResult: UserVoteResult
     ): {round?: Round; error?: string;} => {
     try {
-      global.DB.games[roomId].rounds = global.DB.games[roomId].rounds.map(
-        (round) => (round.roundId === roundId ? round.voteResults.push(userVoteResult) : round)
-      );
       const round = DBConroller.getRound(roomId, roundId);
-      return round ? {round} : {error: 'No round'};
+      const newResults = round.usersVoteResults.map((res): UserVoteResult => {
+        return res.id === userVoteResult.id ? userVoteResult : res;
+      })
+      DBConroller.roundUpdate(roomId, {...round, usersVoteResults: newResults});
+      const roundUpdated = DBConroller.getRound(roomId, roundId);
+      return roundUpdated ? {round: roundUpdated} : {error: 'No round'};
     } catch (e) {
       return {error: e.message};
     }
