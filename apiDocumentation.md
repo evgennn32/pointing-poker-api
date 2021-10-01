@@ -27,10 +27,10 @@ Usage
   - [Stop Round](https://github.com/evgennn32/pointing-poker-api#create-round)
   - [Restart Round](https://github.com/evgennn32/pointing-poker-api#update-round)
   - [Update Round](https://github.com/evgennn32/pointing-poker-api#update-round)
+  - [Add vote Round](https://github.com/evgennn32/pointing-poker-api#add-vote-round)
 - **Users**
   - [Create User](https://github.com/evgennn32/pointing-poker-api#create-user)
   - [Delete User](https://github.com/evgennn32/pointing-poker-api#delete-user)
-  - [User Vote](https://github.com/evgennn32/pointing-poker-api#user-vote)
 - **Issues**
   - [Create Issue](https://github.com/evgennn32/pointing-poker-api#create-issue)
   - [Delete Issue](https://github.com/evgennn32/pointing-poker-api#delete-issue)
@@ -560,6 +560,123 @@ Update game round in the current room.
 
 </details>
 
+**Add Vote Round**
+
+Add a vote to the current round.
+
+<details>
+
+- **Event**
+
+  round:add-vote
+
+- **Params**
+
+  ```typescript
+    {
+      "roomId": string;
+      "roundId": string;
+      "userId": string;
+      "score": string;
+    }
+  ```
+
+- **Success event name**
+
+  None
+
+- **Success event data**
+  ```typescript
+  {
+    "round":
+          roundId: string;
+          issueId: string;
+          roundInProgress: boolean;
+          usersVoteResults: UserVoteResult[];
+          statistics: VoteResult | null;
+  }
+  ```
+- **Success callback response**
+
+  None
+
+- **Error callback:**
+
+  ```typescript
+  {
+    "error": string;
+  }
+  ```
+
+- **Notes:**
+
+  None
+
+</details>
+
+**Create Issue**
+
+Create new issue in existing game/room.
+
+<details>
+
+- **Event**
+
+  game:issue-add
+
+- **Params**
+
+  ```typescript
+    {
+        "newIssue": {
+                  id: string;
+                  issueName: string;
+                  priority: string;
+                  selected: boolean;
+                  link: string;
+                  editable: boolean;
+                },
+         "roomId": string
+    }
+  ```
+
+- **Success event name**
+
+  None
+
+- **Success event data**
+
+  None
+
+- **Success callback response**
+
+  ```typescript
+  {
+    issue: {
+      id: string;
+      issueName: string;
+      priority: string;
+      selected: boolean;
+      link: string;
+      editable: boolean;
+    }
+  }
+  ```
+
+- **Error callback:**
+
+  ```typescript
+  {
+    error: string;
+  }
+  ```
+
+- **Notes:**
+
+  None
+
+</details>
+
 **Start Round**
 
 Start game round in the current room.
@@ -851,124 +968,6 @@ Delete user from existing game.
              {
                users: User[]
              }
-  ```
-
-- **Error callback:**
-
-  ```typescript
-  {
-    error: string;
-  }
-  ```
-
-- **Notes:**
-
-  None
-
-</details>
-
-**User Vote**
-
-Add user's vote to the current game.
-
-<details>
-
-- **Event**
-
-  user:vote
-
-- **Params**
-
-  ```typescript
-    {
-        "userId": string,
-        "roomId": string,
-        "roundId": string,
-        "score": string,
-        "cb": ({})
-    }
-  ```
-
-- **Success event name**
-
-  user:vote
-
-- **Success event data**
-  ```typescript
-  {
-    "round":
-          roundId: string;
-          issueId: string;
-          roundInProgress: boolean;
-          usersVoteResults: UserVoteResult[];
-          statistics: VoteResult | null;
-  }
-  ```
-- **Success callback response**
-
-  None
-
-- **Error callback:**
-
-  ```typescript
-  {
-    "error": string;
-  }
-  ```
-
-- **Notes:**
-
-  None
-
-</details>
-
-**Create Issue**
-
-Create new issue in existing game/room.
-
-<details>
-
-- **Event**
-
-  game:issue-add
-
-- **Params**
-
-  ```typescript
-    {
-        "newIssue": {
-                  id: string;
-                  issueName: string;
-                  priority: string;
-                  selected: boolean;
-                  link: string;
-                  editable: boolean;
-                },
-         "roomId": string
-    }
-  ```
-
-- **Success event name**
-
-  None
-
-- **Success event data**
-
-  None
-
-- **Success callback response**
-
-  ```typescript
-  {
-    issue: {
-      id: string;
-      issueName: string;
-      priority: string;
-      selected: boolean;
-      link: string;
-      editable: boolean;
-    }
-  }
   ```
 
 - **Error callback:**
