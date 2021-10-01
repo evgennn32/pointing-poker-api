@@ -22,7 +22,7 @@ const GameController =  {
         isTimerNeeded: false,
         scoreType: 'Story Point',
         scoreTypeShort: 'SP',
-        roundTime: 120,
+        roundTime: 5,
         timeOut: true,
         gameInProgress: false,
       },
@@ -284,6 +284,7 @@ const GameController =  {
       roundInProgress: false,
       usersVoteResults: GameController.createInitialVoteResults(roomId),
       statistics: null,
+      roundEnded: false,
     }
   },
   roundCreate: (issueId: string, roomId: string): { round?: Round, error?: string } => {
@@ -329,9 +330,13 @@ const GameController =  {
     if(!DBController.roundExists(roomId, roundId)) {
       return {error: "No round with such id"};
     }
-    const round = DBController.roundStop(roundId, roomId);
+    const round = DBController.getRound(roomId, roundId);
+    const roundStopped = DBController.roundUpdate(
+      roomId,
+      {...round, roundInProgress: false, roundEnded:true },
+    );
     const roundStatistics = []
-    const calculatedStatistics = GameController.calculateRoundStatistics(round.usersVoteResults);
+    const calculatedStatistics = GameController.calculateRoundStatistics(roundStopped.usersVoteResults);
     for(let key in calculatedStatistics) {
       if (calculatedStatistics.hasOwnProperty(key)){
         const singleResult = {
@@ -341,8 +346,8 @@ const GameController =  {
         roundStatistics.push(singleResult)
       }
     }
-    round.statistics = roundStatistics;
-    const roundWithStatistics = DBController.roundUpdate(roomId, round);
+    roundStopped.statistics = roundStatistics;
+    const roundWithStatistics = DBController.roundUpdate(roomId, roundStopped);
 
     return { round: roundWithStatistics };
   },

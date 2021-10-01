@@ -135,14 +135,6 @@ const DBConroller = {
     );
     return DBConroller.getRound(roomId, roundId);
   },
-  roundStop: (roomId: string, roundId: string): Round => {
-    global.DB.games[roomId].rounds = global.DB.games[roomId].rounds.map(
-      (round) => (
-        round.id === roundId ? {...round, roundInProgress: false} : round
-      )
-    );
-    return DBConroller.getRound(roomId, roundId);
-  },
   getRound: (roomId: string, roundId: string): Round | null => {
     return global.DB.games[roomId].rounds.find(round => (round.roundId === roundId));
   },
