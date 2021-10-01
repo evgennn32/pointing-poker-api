@@ -144,6 +144,12 @@ const DBConroller = {
       )
     ).length > 0;
   },
+  roundWithIssueExists: (roomId: string, issueId: string): Round | undefined => {
+    return global.DB.games[roomId].rounds.find((round: Round) => (
+        round.issueId === issueId
+      )
+    );
+  },
   addUserVote:
     (
       roomId: string, roundId: string, userVoteResult: UserVoteResult

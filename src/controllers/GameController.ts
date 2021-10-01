@@ -297,6 +297,10 @@ const GameController =  {
     if (!DBController.gameIsset(roomId)) {
       return {error: "This game no longer exists, can't create round"};
     }
+    const round = DBController.roundWithIssueExists(roomId, issueId);
+    if (round) {
+      return {round};
+    }
     const roundInitialData = GameController.createRoundInitialData(issueId, roomId);
     return DBController.roundCreate( roomId, roundInitialData);
   },
