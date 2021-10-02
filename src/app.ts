@@ -54,14 +54,11 @@ io.on("connection", socket => {
   });
 
   socket.on('user:create', (newUser: User, roomId: string, cb: ({}) => void) => {
-    console.log("user request");
     if (!DBController.gameIsset(roomId)) {
-      console.log("59 This game no longer exists", `-${roomId}-`);
       return cb({error: 'This game no longer exists'});
     }
     const {user, error} = GameController.addUser(newUser, roomId)
     if (error) {
-      console.log(" 64 This game no longer exists", error);
       return typeof cb === "function" ? cb(error) : null;
     }
     if (typeof cb === "function") {
@@ -95,19 +92,28 @@ io.on("connection", socket => {
     );
   });
 
-  socket.on('user:vote',
-    (userId: string, roomId: string, roundId:string, score: string, cb: ({}) => void) => {
-    const {user, error} = GameController.getUser(userId, roomId);
+  socket.on('round:add-vote',
+    (data: {
+      roomId: string;
+      roundId: string;
+      userId: string;
+      score: string;
+    }, cb: ({}) => void) => {
+    const {user, error} = GameController.getUser(data.roomId, data.userId);
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    user.score = score;
-    const result = GameController.userVote(roomId, roundId, user);
+    user.score = data.score;
+    const result = GameController.userVote(data.roomId, data.roundId, user);
     if (result.error) {
       return typeof cb === "function" ? cb({error: result.error}) : null;
     }
-    socket.in(roomId).emit(
-      'user:vote',
+    if (typeof cb === "function") {
+      cb(result);
+    }
+
+    socket.in(data.roomId).emit(
+      'round:update',
       {round: result.round}
     );
   });
@@ -266,7 +272,7 @@ io.on("connection", socket => {
       cb({round});
     }
     socket.in(roomId).emit(
-      'round:start',
+      'round:update',
       {round}
     );
   });
@@ -280,7 +286,7 @@ io.on("connection", socket => {
       cb({round});
     }
     socket.in(roomId).emit(
-      'round:stop',
+      'round:update',
       {round}
     );
   });
@@ -294,7 +300,7 @@ io.on("connection", socket => {
       cb({round});
     }
     socket.in(roomId).emit(
-      'round:restart',
+      'round:update',
       {round}
     );
   });
@@ -307,6 +313,10 @@ io.on("connection", socket => {
     if(typeof cb === "function") {
       cb(round);
     }
+    socket.in(roomId).emit(
+      'round:update',
+      {round}
+    );
   });
 
   socket.on('DB:getAllData', (cb: ({}) => void) => {
