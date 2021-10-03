@@ -258,7 +258,7 @@ io.on("connection", socket => {
       cb({round});
     }
     socket.in(roomId).emit(
-      'round:new',
+      'round:update',
       {round}
     );
   });

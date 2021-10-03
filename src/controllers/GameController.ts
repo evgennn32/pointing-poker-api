@@ -375,6 +375,9 @@ const GameController =  {
   calculateRoundStatistics: (voteResults: UserVoteResult[]): any  => {
     const statistics = {}
     voteResults.forEach(result => {
+      if (!result.score) {
+        return statistics
+      }
 
       if(statistics[result.score]) {
         statistics[result.score] += 1
