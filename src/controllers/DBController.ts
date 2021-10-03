@@ -129,9 +129,11 @@ const DBConroller = {
   },
   roundStart: (roomId: string, roundId: string): Round => {
     global.DB.games[roomId].rounds = global.DB.games[roomId].rounds.map(
-      (round) => (
-        round.roundId === roundId ? {...round, roundInProgress: true} : round
-      )
+      (round) => {
+        if( round.roundId !== roundId) return round;
+        round.usersVoteResults =  round.usersVoteResults.map(user => ({...user, score: null}));
+        return {...round, roundInProgress: true};
+      }
     );
     return DBConroller.getRound(roomId, roundId);
   },
