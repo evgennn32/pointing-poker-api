@@ -84,7 +84,9 @@ const GameController =  {
     if (!DBController.gameIsset(roomId)) {
       return {error: "This game no longer exists, can't end game"};
     }
-    return {gameResults: DBController.getGameResults(roomId)};
+    const gameSettings = DBController.getGameSettings(roomId);
+    DBController.updateGameSettings({ ... gameSettings, gameInProgress: false } , roomId);
+    return {game: DBController.getGame(roomId)};
   },
   gameHasIssues: (roomId: string) => {
     if (!roomId) {

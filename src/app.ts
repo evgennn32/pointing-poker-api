@@ -250,17 +250,18 @@ io.on("connection", socket => {
   });
 
   socket.on('game:end', (roomId: string, cb: ({}) => void) => {
-    const {gameResults, error} = GameController.endGame(roomId);
+    const {game, error} = GameController.endGame(roomId);
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
     if (typeof cb === "function") {
-      cb({gameResults});
+      cb({game});
     }
     socket.in(roomId).emit(
-      'game:end',
-      {gameResults}
+      'game:update',
+      {game}
     );
+
     setTimeout(() => {
       GameController.deleteGame(roomId);
     }, 5000);
