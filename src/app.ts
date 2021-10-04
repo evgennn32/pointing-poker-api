@@ -53,6 +53,23 @@ io.on("connection", socket => {
     socket.join(roomId);
   });
 
+  socket.on('game:update-state', (roomId: string, cb: ({}) => void) => {
+    if (!DBController.gameIsset(roomId)) {
+      return cb({error: 'No such game or URL is incorrect'});
+    }
+    const {game, error} = GameController.getGame(roomId);
+    if (error) {
+      return typeof cb === "function" ? cb(error) : null;
+    }
+    if (typeof cb === "function") {
+      cb({game});
+    }
+    socket.in(roomId).emit(
+      'game:update',
+      {game}
+    );
+  });
+
   socket.on('user:create', (newUser: User, roomId: string, cb: ({}) => void) => {
     if (!DBController.gameIsset(roomId)) {
       return cb({error: 'This game no longer exists'});
