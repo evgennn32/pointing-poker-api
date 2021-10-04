@@ -84,7 +84,9 @@ const GameController =  {
     if (!DBController.gameIsset(roomId)) {
       return {error: "This game no longer exists, can't end game"};
     }
-    return {gameResults: DBController.getGameResults(roomId)};
+    const gameSettings = DBController.getGameSettings(roomId);
+    DBController.updateGameSettings({ ... gameSettings, gameInProgress: false } , roomId);
+    return {game: DBController.getGame(roomId)};
   },
   gameHasIssues: (roomId: string) => {
     if (!roomId) {
@@ -274,8 +276,20 @@ const GameController =  {
 
   },
   createInitialVoteResults: (roomId: string): UserVoteResult[] => {
+    const gameSettings = DBController.getGameSettings(roomId);
     const users = DBController.getUsers(roomId);
-    return users.map(user => ({...user, score: null}));
+
+    if (!users) {
+      return [];
+    }
+    const usersAbleToVote = users.filter(
+      (user) =>
+        !user.scrumMaster &&
+        !user.observer ||
+        (user.scrumMaster && gameSettings.scrumMasterAsPlayer),
+    );
+
+    return usersAbleToVote.map(user => ({...user, score: null}));
   },
   createRoundInitialData: (issueId: string, roomId: string): Round => {
     return {

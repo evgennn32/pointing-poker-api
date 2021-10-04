@@ -7,4 +7,5 @@ export interface User {
   ableToDelete: boolean;
   score: string;
   scrumMaster: boolean;
+  observer?: boolean;
 }
