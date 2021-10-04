@@ -5,6 +5,7 @@ import GameSettings from "./models/GameSettings";
 import { Issue } from "./models/Issue";
 import { Card } from "./models/Card";
 import Round from "./models/Round";
+import { ChatMessage } from "./models/ChatMessage";
 
 const app = require('express')();
 const http = require('http').Server(app);
@@ -29,6 +30,19 @@ io.on("connection", socket => {
     console.log(socket.rooms);
   });
 
+  socket.on('chat:send-message', (newMessage: ChatMessage, roomId: string, cb: ({}) => void) => {
+    const {message, error} = GameController.chatSendMessage(newMessage, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    if (typeof cb === "function") {
+      cb({message});
+    }
+    socket.in(roomId).emit(
+      'chat:new-message',
+      {message}
+    );
+  });
   socket.on('game:update-settings', (gameSettings: GameSettings, roomId: string, cb: ({}) => void) => {
     const {settings, error} = GameController.updateGameSettings(gameSettings, roomId);
     if (error) {
