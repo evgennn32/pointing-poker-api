@@ -23,7 +23,7 @@ const GameController =  {
         isTimerNeeded: false,
         scoreType: 'Story Point',
         scoreTypeShort: 'SP',
-        roundTime: 5,
+        roundTime: 240,
         timeOut: true,
         gameInProgress: false,
       },
