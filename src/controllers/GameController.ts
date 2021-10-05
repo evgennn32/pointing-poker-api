@@ -175,8 +175,27 @@ const GameController =  {
     if (!DBController.roundExists(roomId, roundId)) {
       return {error: "This round no longer exists, can't add vote"};
     }
-    return DBController.addUserVote(roomId, roundId, userVoteResult)
 
+    const result = DBController.addUserVote(roomId, roundId, userVoteResult);
+    if (result.error) {
+      return result
+    }
+    const roundWithVote = { ...result.round }
+    const roundStatistics = []
+    const calculatedStatistics = GameController.calculateRoundStatistics(roundWithVote.usersVoteResults);
+    for(let key in calculatedStatistics) {
+      if (calculatedStatistics.hasOwnProperty(key)){
+        const singleResult = {
+          card: GameController.getCardByValue(roomId, key),
+          value: calculatedStatistics[key],
+        }
+        roundStatistics.push(singleResult)
+      }
+    }
+    roundWithVote.statistics = roundStatistics;
+    const roundWithStatistics = DBController.roundUpdate(roomId, roundWithVote);
+
+    return { round: roundWithStatistics };
   },
   addIssue: (issue: Issue, roomId: string): { issue?: Issue, error?: string } => {
     if (!issue.issueName) {
