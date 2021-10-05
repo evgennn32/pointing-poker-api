@@ -154,6 +154,7 @@ io.on("connection", socket => {
       cb(result);
     }
 
+
     socket.in(data.roomId).emit(
       'round:update',
       {round: result.round}
