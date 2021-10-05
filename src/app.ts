@@ -5,6 +5,7 @@ import GameSettings from "./models/GameSettings";
 import { Issue } from "./models/Issue";
 import { Card } from "./models/Card";
 import Round from "./models/Round";
+import { ChatMessage } from "./models/ChatMessage";
 
 const app = require('express')();
 const http = require('http').Server(app);
@@ -28,7 +29,31 @@ io.on("connection", socket => {
     socket.emit("game:created", newGame);
     console.log(socket.rooms);
   });
+  var onevent = socket.onevent;
+  socket.onevent = function (packet) {
+    var args = packet.data || [];
+    onevent.call (this, packet);    // original call
+    packet.data = ["*"].concat(args);
+    onevent.call(this, packet);      // additional call to catch-all
+  };
+  socket.on("*",function(event,data) {
+    console.log(event);
+    // console.log(data);
+  });
 
+  socket.on('chat:send-message', (newMessage: ChatMessage, roomId: string, cb: ({}) => void) => {
+    const {message, error} = GameController.chatSendMessage(newMessage, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
+    }
+    if (typeof cb === "function") {
+      cb({message});
+    }
+    socket.in(roomId).emit(
+      'chat:new-message',
+      {message}
+    );
+  });
   socket.on('game:update-settings', (gameSettings: GameSettings, roomId: string, cb: ({}) => void) => {
     const {settings, error} = GameController.updateGameSettings(gameSettings, roomId);
     if (error) {
@@ -120,8 +145,8 @@ io.on("connection", socket => {
     if (error) {
       return typeof cb === "function" ? cb({error}) : null;
     }
-    user.score = data.score;
-    const result = GameController.userVote(data.roomId, data.roundId, user);
+
+    const result = GameController.userVote(data.roomId, data.roundId, {...user, score: data.score});
     if (result.error) {
       return typeof cb === "function" ? cb({error: result.error}) : null;
     }
@@ -337,9 +362,10 @@ io.on("connection", socket => {
     );
   });
 
-  socket.on('DB:getAllData', (cb: ({}) => void) => {
+  socket.on('DB:getAllData', (roomId, cb: ({}) => void) => {
     if (typeof cb === "function") {
-      cb(global.DB);
+      const {game} = GameController.getGame(roomId);
+      cb(game);
     }
   });
   console.log(socket.id)

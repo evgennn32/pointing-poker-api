@@ -7,6 +7,7 @@ import GameSettings from "../models/GameSettings";
 import { Card } from "../models/Card";
 import Round from "../models/Round";
 import UserVoteResult from "../models/UserVoteResult";
+import { ChatMessage } from "../models/ChatMessage";
 
 const GameController =  {
   createGame: (user: User) => {
@@ -22,7 +23,7 @@ const GameController =  {
         isTimerNeeded: false,
         scoreType: 'Story Point',
         scoreTypeShort: 'SP',
-        roundTime: 5,
+        roundTime: 240,
         timeOut: true,
         gameInProgress: false,
       },
@@ -414,6 +415,19 @@ const GameController =  {
       return {error: "Issue id is required"};
     }
     return {round: DBController.roundUpdate(roomId, round)};
+  },
+  chatSendMessage: (message: ChatMessage, roomId): { message?: ChatMessage, error?: string } => {
+    if (!roomId) {
+      return {error: "roomId is required"};
+    }
+    if (!message) {
+      return {error: "message is required"};
+    }
+    if (!message.user.id) {
+      return {error: "user is required"};
+    }
+
+    return {message};
   },
 }
 
