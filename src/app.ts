@@ -31,13 +31,7 @@ io.on("connection", socket => {
     socket.emit("game:created", newGame);
     console.log(socket.rooms);
   });
-  var onevent = socket.onevent;
-  socket.onevent = function (packet) {
-    var args = packet.data || [];
-    onevent.call (this, packet);    // original call
-    packet.data = ["*"].concat(args);
-    onevent.call(this, packet);      // additional call to catch-all
-  };
+
   socket.on("*",function(event,data) {
     console.log(event);
     // console.log(data);
@@ -80,13 +74,30 @@ io.on("connection", socket => {
     socket.join(roomId);
   });
 
-  socket.on('game:update-state', (roomId: string, cb: ({}) => void) => {
+  socket.on('game:update-state', (roomId: string,  cb: ({}) => void) => {
     if (!DBController.gameIsset(roomId)) {
       return cb({error: 'No such game or URL is incorrect'});
     }
     const {game, error} = GameController.getGame(roomId);
     if (error) {
       return typeof cb === "function" ? cb(error) : null;
+    }
+    if (typeof cb === "function") {
+      cb({game});
+    }
+    socket.in(roomId).emit(
+      'game:update',
+      {game}
+    );
+  });
+
+  socket.on('game:update-name', (roomId: string, name: string, cb: ({}) => void) => {
+    if (!DBController.gameIsset(roomId)) {
+      return cb({error: 'No such game or URL is incorrect'});
+    }
+    const {game, error} = GameController.updateGameName(name, roomId);
+    if (error) {
+      return typeof cb === "function" ? cb({error}) : null;
     }
     if (typeof cb === "function") {
       cb({game});

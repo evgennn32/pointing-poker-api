@@ -44,6 +44,10 @@ const DBConroller = {
     global.DB.games[roomId].gameSettings = settings;
     return {settings: global.DB.games[roomId].gameSettings};
   },
+  updateGameName: (name: string, roomId) => {
+    global.DB.games[roomId].roomName = name;
+    return {game: global.DB.games[roomId]};
+  },
   addUser: (user: User, roomID): {error?: string; user?: User} => {
     if(!global.DB.games[roomID]) {
       return {error: 'No such game'};
