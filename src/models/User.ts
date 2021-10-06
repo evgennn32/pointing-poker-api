@@ -1,4 +1,4 @@
-export default interface User {
+export interface User {
   id: string;
   image: string | null;
   firstName: string;
@@ -9,5 +9,3 @@ export default interface User {
   scrumMaster: boolean;
   observer?: boolean;
 }
-
-export { User };
