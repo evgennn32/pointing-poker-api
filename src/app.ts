@@ -9,8 +9,8 @@ import { ChatMessage } from "./models/ChatMessage";
 import cors from "cors";
 
 const app = require('express')();
+app.use(cors);
 const http = require('http').Server(app);
-http.use(cors);
 const io = require('socket.io')(http, {
   cors: {
     origin: '*',
