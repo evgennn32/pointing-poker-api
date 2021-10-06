@@ -1,13 +1,5 @@
 export const InitialCards = [
     {
-        value: "12",
-        type: "story point",
-        shortType: "SP",
-        selected: false,
-        closed: false,
-        editable: true,
-      },
-      {
         value: "1",
         type: "story point",
         shortType: "SP",
@@ -16,7 +8,23 @@ export const InitialCards = [
         editable: true,
       },
       {
-        value: "13",
+        value: "2",
+        type: "story point",
+        shortType: "SP",
+        selected: false,
+        closed: false,
+        editable: true,
+      },
+      {
+        value: "3",
+        type: "story point",
+        shortType: "SP",
+        selected: false,
+        closed: false,
+        editable: true,
+      },
+      {
+        value: "5",
         type: "story point",
         shortType: "SP",
         selected: false,
