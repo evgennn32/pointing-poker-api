@@ -110,6 +110,19 @@ const GameController =  {
     }
     return DBController.updateGameSettings(settings, roomId);
   },
+
+  updateGameName: (name: string, roomId): {error?: string; game?: GameSettings} => {
+    if (!name) {
+      return {error: "name is required"};
+    }
+    if (!roomId) {
+      return {error: "RoomId is required"};
+    }
+    if (!DBController.gameIsset(roomId)) {
+      return {error: "This game no longer exists, can't update name"};
+    }
+    return DBController.updateGameName(name, roomId);
+  },
   addUser: (newUser: User, roomId: string): { user?: User, error?: string } => {
     if (!newUser.firstName) {
       return {error: "Username and room are required"};
