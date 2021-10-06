@@ -6,9 +6,11 @@ import { Issue } from "./models/Issue";
 import { Card } from "./models/Card";
 import Round from "./models/Round";
 import { ChatMessage } from "./models/ChatMessage";
+import cors from "cors";
 
 const app = require('express')();
 const http = require('http').Server(app);
+http.use(cors);
 const io = require('socket.io')(http, {
   cors: {
     origin: '*',
