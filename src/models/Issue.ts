@@ -1,4 +1,4 @@
-export interface Issue {
+export default interface Issue {
   id: string;
   issueName: string;
   priority: string;
@@ -6,3 +6,5 @@ export interface Issue {
   link: string;
   editable: boolean;
 }
+
+export { Issue };
